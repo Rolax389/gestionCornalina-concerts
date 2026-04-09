@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotizador PRO - Dolce Ensamble</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --primary: #d4af37; 
@@ -30,7 +31,6 @@
         /* --- ANIMACIONES --- */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; }
 
         header { text-align: center; margin-bottom: 20px; animation: fadeIn 0.8s ease-out; position: relative; }
         h1 { color: var(--primary); font-size: 2.2rem; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
@@ -45,9 +45,7 @@
         .tabs-nav {
             display: flex; gap: 10px; overflow-x: auto; margin: 0 auto 30px auto; max-width: 1400px;
             border-bottom: 2px solid #333; padding-bottom: 5px;
-            /* Ocultar scrollbar para un diseño más limpio */
-            scrollbar-width: none; 
-            -ms-overflow-style: none;
+            scrollbar-width: none; -ms-overflow-style: none;
         }
         .tabs-nav::-webkit-scrollbar { display: none; }
         
@@ -125,6 +123,8 @@
         .btn-add:hover { background-color: var(--primary); color: #000; }
         .btn-danger { background-color: transparent; color: var(--accent); border: 1px dashed var(--accent); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; transition: 0.3s;}
         .btn-danger:hover { background-color: var(--accent); color: #fff; }
+        .btn-outline { background-color: transparent; color: var(--text-light); border: 1px solid #555; }
+        .btn-outline:hover { background-color: #333; }
 
         .download-controls { display: flex; flex: 1; min-width: 250px; gap: 10px; }
         .download-select { flex: 2; padding: 15px; background-color: #2a2a2a; color: var(--text-light); border: 2px solid var(--primary); border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; outline: none; }
@@ -175,9 +175,21 @@
         .roi-number { font-size: 2.5rem; color: var(--primary); font-weight: bold; display: block; margin: 10px 0; transition: transform 0.2s;}
         textarea.contract-area { width: 100%; height: 150px; background: #111; color: #ccc; border: 1px solid #444; border-radius: 8px; padding: 10px; resize: none; font-family: monospace; font-size: 0.85rem; margin-bottom: 10px;}
 
-        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); border-bottom: 3px solid var(--primary); font-weight: bold; }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        /* --- MODAL EXPORT --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--bg-card); border: 1px solid var(--primary); border-radius: 12px;
+            padding: 30px; width: 90%; max-width: 400px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .modal-title { color: var(--primary); font-size: 1.5rem; margin-bottom: 15px; }
+
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px; transform: translateX(-50%); border-bottom: 3px solid var(--primary); font-weight: bold; }
+        #toast.show { visibility: visible; animation: fadeIn 0.5s, fadeOut 0.5s 2.5s forwards; }
+        @keyframes fadeOut { from {opacity: 1;} to {opacity: 0;} }
     </style>
 </head>
 <body>
@@ -393,6 +405,17 @@
         </div>
     </div> <!-- Fin Pestaña 4 -->
 
+    <!-- MODAL DE EXPORTACIÓN -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal-content">
+            <h3 class="modal-title">📥 Exportar Setlist</h3>
+            <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem;">Selecciona el formato en el que deseas descargar la ficha del show para enviarla a tu equipo.</p>
+            <button class="btn btn-image" style="width: 100%; margin-bottom: 10px;" onclick="window.executeExport('png')">📸 Descargar Imagen (PNG)</button>
+            <button class="btn" style="width: 100%; margin-bottom: 20px; background-color: #ff4444; color: #fff;" onclick="window.executeExport('pdf')">📄 Descargar Documento (PDF)</button>
+            <button class="btn btn-outline" style="width: 100%;" onclick="window.closeExportModal()">Cancelar</button>
+        </div>
+    </div>
+
     <div id="toast">Notificación</div>
 
     <script type="module">
@@ -425,21 +448,15 @@
         window.etapaCounter = 1;
         window.songCounter = 1;
         let cloneCounter = 0;
+        window.currentExportId = null; // Variable global para el ID del modal
 
         // --- MANEJO DE PESTAÑAS (TABS) ---
         window.switchTab = (tabId) => {
-            // Ocultar todos los contenidos
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            // Deseleccionar botones
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            // Activar el tab seleccionado
             document.getElementById(tabId).classList.add('active');
-            // Activar botón correspondiente
             const btn = document.querySelector(`.tab-btn[onclick="window.switchTab('${tabId}')"]`);
             if(btn) btn.classList.add('active');
-            
-            // Para html2canvas: Si se va a renderizar, es mejor que las secciones estén visibles en el DOM. 
-            // Html2canvas no toma display:none. Las funciones de renderizado forzarán el cambio de tab temporalmente si es necesario.
         };
 
         // --- FUNCIONES BÁSICAS ---
@@ -552,8 +569,8 @@
                 <div class="sl-header">
                     <input type="text" class="sl-title editable-title" style="margin:0; flex:1; min-width:200px;" value="${sl.title || ''}" placeholder="Nombre del Show" oninput="window.triggerSave()">
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <button class="btn-whatsapp" style="padding: 6px 12px; font-size: 0.85rem; width:auto; border-radius:6px;" onclick="window.copySetlist('${sl.id}')">📱 Enviar WA</button>
-                        <button class="btn-image" style="padding: 6px 12px; font-size: 0.85rem; width:auto; border-radius:6px;" onclick="window.downloadSetlistImage('${sl.id}')">📸 IMG / PDF</button>
+                        <button class="btn-outline" style="padding: 6px 12px; font-size: 0.85rem; width:auto; border-radius:6px; background-color:#333; cursor:pointer;" onclick="window.copySetlist('${sl.id}')">📋 Copiar Info</button>
+                        <button class="btn-image" style="padding: 6px 12px; font-size: 0.85rem; width:auto; border-radius:6px;" onclick="window.openExportModal('${sl.id}')">📥 Exportar...</button>
                         <button class="btn-danger" style="padding: 6px 12px;" onclick="window.removeElementById('${sl.id}')">✖ Borrar Ficha</button>
                     </div>
                 </div>
@@ -625,21 +642,79 @@
             
             const el = document.createElement('textarea');
             el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-            showToast("✅ Setlist copiado para WhatsApp");
+            showToast("✅ Información copiada. Lista para pegar en WhatsApp.");
+        };
+
+        // --- MODAL DE EXPORTACIÓN Y DESCARGAS ---
+        window.openExportModal = (id) => {
+            window.currentExportId = id;
+            document.getElementById('exportModal').style.display = 'flex';
+        };
+
+        window.closeExportModal = () => {
+            window.currentExportId = null;
+            document.getElementById('exportModal').style.display = 'none';
+        };
+
+        window.executeExport = (type) => {
+            if(!window.currentExportId) return;
+            if(type === 'png') {
+                window.downloadSetlistImage(window.currentExportId);
+            } else if (type === 'pdf') {
+                window.downloadSetlistPDF(window.currentExportId);
+            }
+            window.closeExportModal();
         };
 
         window.downloadSetlistImage = (id) => {
-            // Asegurarse de que estamos en la pestaña correcta para que html2canvas pueda tomar la foto
             window.switchTab('tab-setlist'); 
-            const card = document.getElementById(id);
-            showToast("📸 Generando imagen del Setlist...");
-            html2canvas(card, { backgroundColor: '#1e1e1e', scale: 2 }).then(canvas => {
-                const link = document.createElement('a'); 
-                link.download = `Setlist_Dolce_${id}.png`; 
-                link.href = canvas.toDataURL('image/png'); 
-                link.click(); 
-                showToast("✅ Imagen del setlist descargada.");
-            });
+            setTimeout(() => { // Retraso de 300ms para asegurar renderizado de la pestaña
+                const card = document.getElementById(id);
+                showToast("📸 Generando imagen...");
+                html2canvas(card, { backgroundColor: '#1e1e1e', scale: 2 }).then(canvas => {
+                    const link = document.createElement('a'); 
+                    link.download = `Setlist_Dolce_${id}.png`; 
+                    link.href = canvas.toDataURL('image/png'); 
+                    link.click(); 
+                    showToast("✅ Imagen descargada con éxito.");
+                });
+            }, 300);
+        };
+
+        window.downloadSetlistPDF = (id) => {
+            window.switchTab('tab-setlist');
+            setTimeout(() => {
+                const card = document.getElementById(id);
+                showToast("📄 Generando PDF...");
+                
+                html2canvas(card, { backgroundColor: '#1e1e1e', scale: 2 }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                    const { jsPDF } = window.jspdf;
+                    
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save(`Setlist_Dolce_${id}.pdf`);
+                    showToast("✅ Documento PDF descargado.");
+                });
+            }, 300);
+        };
+
+        window.downloadImage = () => {
+            window.switchTab('tab-finanzas');
+            setTimeout(() => { // Retraso de 300ms para asegurar que la pestaña Finanzas es visible
+                const sel = document.getElementById('download-select').value;
+                showToast("📸 Capturando imagen de Finanzas...");
+                html2canvas(document.getElementById(sel === 'export-area' ? 'export-area' : sel), { backgroundColor: '#121212', scale: 2 }).then(canvas => {
+                    const link = document.createElement('a'); 
+                    link.download = sel === 'export-area' ? 'Propuestas.png' : `Propuesta_${sel}.png`; 
+                    link.href = canvas.toDataURL('image/png'); 
+                    link.click(); 
+                    showToast("✅ Imagen guardada.");
+                });
+            }, 300);
         };
 
         // --- SHOWS DRAG & DROP ---
@@ -657,7 +732,6 @@
                     <input type="text" class="show-title-input" value="${show.title}" oninput="window.triggerSave()">
                     <button class="btn-danger" onclick="window.removeElementById('${show.id}')">✖</button>
                 </div>
-                <!-- Tags added dynamically here by applyState or UI -->
                 <textarea class="gear-input" placeholder="Asignación de Inventario/Equipo (ej. Rolando: Consola y Bocina. Carlos: Cajón...)" oninput="window.triggerSave()">${show.gear || ''}</textarea>
             </div>`;
         }
@@ -822,15 +896,6 @@
             const el = document.createElement('textarea');
             el.value = `*Cotización Dolce Ensamble* 🎻\nTarifa Músico: $${document.getElementById('rate').value}/h | Traslado: $${document.getElementById('travel').value} | Audio/Gestión: $${document.getElementById('fee').value}\n\n*${dataStore.p1.name}:* ${dataStore.p1.cost}\n*${dataStore.p2.name}:* ${dataStore.p2.cost}\n*${dataStore.p3.name}:* ${dataStore.p3.cost}\n*${dataStore.p4.name}:* ${dataStore.p4.cost}\n`;
             document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); showToast("📱 Precios copiados para WhatsApp!");
-        };
-        window.downloadImage = () => {
-            // Asegurarse de que estamos en la pestaña correcta para html2canvas
-            window.switchTab('tab-finanzas');
-            const sel = document.getElementById('download-select').value;
-            showToast("📸 Capturando imagen...");
-            html2canvas(document.getElementById(sel === 'export-area' ? 'export-area' : sel), { backgroundColor: '#121212', scale: 2 }).then(canvas => {
-                const link = document.createElement('a'); link.download = sel === 'export-area' ? 'Propuestas.png' : `Propuesta_${sel}.png`; link.href = canvas.toDataURL('image/png'); link.click(); showToast("✅ Imagen guardada.");
-            });
         };
 
         // Init
