@@ -16,6 +16,7 @@
             --text-muted: #a0a0a0;
             --accent: #ff4444;
             --success: #25D366;
+            --link: #4285F4;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -27,65 +28,82 @@
         }
 
         /* --- ANIMACIONES --- */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; }
 
-        header { text-align: center; margin-bottom: 30px; animation: fadeIn 0.8s ease-out; position: relative; }
-        h1 { color: var(--primary); font-size: 2.5rem; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        h2 { color: var(--text-muted); font-size: 1.1rem; font-weight: 400; }
+        header { text-align: center; margin-bottom: 20px; animation: fadeIn 0.8s ease-out; position: relative; }
+        h1 { color: var(--primary); font-size: 2.2rem; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        h2 { color: var(--text-muted); font-size: 1rem; font-weight: 400; }
         .sync-status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 20px; margin-top: 10px;}
         .sync-dot { width: 8px; height: 8px; background-color: #555; border-radius: 50%; transition: 0.3s; }
         .sync-dot.online { background-color: var(--success); box-shadow: 0 0 8px var(--success); }
 
-        h3.section-title { color: var(--primary); text-align: center; margin: 50px 0 25px 0; border-bottom: 1px solid #333; padding-bottom: 10px; font-size: 1.8rem; }
+        h3.section-title { color: var(--primary); text-align: center; margin: 30px 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 10px; font-size: 1.5rem; }
 
-        /* --- CONTROLES SUPERIORES --- */
-        .controls-panel {
+        /* --- PESTAÑAS (TABS) --- */
+        .tabs-nav {
+            display: flex; gap: 10px; overflow-x: auto; margin: 0 auto 30px auto; max-width: 1400px;
+            border-bottom: 2px solid #333; padding-bottom: 5px;
+            /* Ocultar scrollbar para un diseño más limpio */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .tabs-nav::-webkit-scrollbar { display: none; }
+        
+        .tab-btn {
+            background-color: #2a2a2a; color: var(--text-light); border: 1px solid #444; border-bottom: none;
+            padding: 12px 20px; border-radius: 10px 10px 0 0; cursor: pointer; font-weight: bold;
+            white-space: nowrap; transition: 0.3s; font-size: 0.95rem;
+        }
+        .tab-btn:hover { background-color: #333; }
+        .tab-btn.active { background-color: var(--primary); color: #000; border-color: var(--primary); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+
+        /* --- CONTROLES Y LOGÍSTICA --- */
+        .panel-box {
             background-color: var(--bg-card); border: 1px solid #333; border-radius: 12px;
-            padding: 25px; max-width: 900px; margin: 0 auto 30px auto;
-            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+            padding: 25px; max-width: 1400px; margin: 0 auto 30px auto;
             box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         }
-        .input-group { display: flex; flex-direction: column; align-items: center; min-width: 220px; }
-        .input-group label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 8px; font-weight: bold; }
-        .input-wrapper { position: relative; display: flex; align-items: center; }
-        .input-wrapper span { position: absolute; left: 15px; color: var(--text-light); font-size: 1.2rem; }
-        .controls-panel input[type="number"] {
-            background-color: #2a2a2a; border: 2px solid #444; color: var(--text-light);
-            padding: 12px 12px 12px 35px; font-size: 1.2rem; border-radius: 8px; transition: 0.3s; width: 160px; text-align: center;
+        
+        .logistics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; align-items: flex-end; }
+        
+        .input-group { display: flex; flex-direction: column; align-items: flex-start; width: 100%; }
+        .input-group.center { align-items: center; }
+        .input-group label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 8px; font-weight: bold; }
+        
+        .input-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+        .input-wrapper span.currency { position: absolute; left: 15px; color: var(--text-light); font-size: 1.2rem; }
+        
+        input[type="number"], input[type="text"], textarea {
+            background-color: #2a2a2a; border: 1px solid #444; color: var(--text-light);
+            padding: 12px; font-size: 1rem; border-radius: 8px; transition: 0.3s; width: 100%;
         }
-        .controls-panel input[type="number"]:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(212, 175, 55, 0.3); outline: none; }
+        input[type="number"] { padding-left: 35px; text-align: center; font-size: 1.2rem; }
+        input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(212, 175, 55, 0.3); outline: none; }
+
+        .btn-maps { background-color: var(--link); color: white; padding: 12px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.3s; text-align: center; border: 2px solid transparent;}
+        .btn-maps:hover { background-color: #3367D6; transform: scale(1.02); }
+        .btn-link { background-color: var(--link); color: #fff; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; white-space: nowrap;}
+        .btn-link:hover { background-color: #3367D6; }
 
         /* --- TARJETAS EDITABLES --- */
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; }
-        .card {
-            background-color: var(--bg-card); border: 1px solid #333; border-radius: 12px;
-            padding: 20px; display: flex; flex-direction: column; position: relative; overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s; opacity: 0;
-        }
+        .card { background-color: var(--bg-card); border: 1px solid #333; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; position: relative; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; opacity: 1; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); border-color: #555; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--primary), #ffe066); }
         
-        .editable-title {
-            background: transparent; border: none; border-bottom: 1px dashed var(--primary);
-            color: var(--primary); font-size: 1.3rem; font-weight: bold; width: 100%; margin-bottom: 10px; padding-bottom: 2px;
-        }
+        .editable-title { background: transparent; border: none; border-bottom: 1px dashed var(--primary); color: var(--primary); font-size: 1.3rem; font-weight: bold; width: 100%; margin-bottom: 10px; padding-bottom: 2px; }
         .editable-title:focus { outline: none; border-bottom: 1px solid var(--primary); background: rgba(255,255,255,0.05); }
-        
         .card-badge { display: inline-block; background-color: #333; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 10px; color: #fff;}
-        .editable-hour {
-            background: rgba(255,255,255,0.1); border: 1px solid transparent; color: var(--primary); font-weight: bold;
-            width: 40px; text-align: center; font-size: 0.95rem; border-radius: 4px; padding: 2px; transition: 0.3s;
-        }
+        .editable-hour { background: rgba(255,255,255,0.1); border: 1px solid transparent; color: var(--primary); font-weight: bold; width: 40px; text-align: center; font-size: 0.95rem; border-radius: 4px; padding: 2px; transition: 0.3s; }
         .editable-hour:focus { outline: none; border-color: var(--primary); background: rgba(0,0,0,0.5); }
         .editable-hour::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-        select.card-select {
-            width: 100%; padding: 10px; background-color: #2a2a2a; color: var(--text-light);
-            border: 1px solid #444; border-radius: 8px; font-size: 0.95rem; margin-bottom: 15px; cursor: pointer; transition: 0.3s;
-        }
+        select.card-select { width: 100%; padding: 10px; background-color: #2a2a2a; color: var(--text-light); border: 1px solid #444; border-radius: 8px; font-size: 0.95rem; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
         select.card-select:focus { border-color: var(--primary); outline: none; }
 
         .results-box { background-color: #161616; border-radius: 8px; padding: 15px; margin-top: auto; border-left: 3px solid #444; transition: 0.3s; }
@@ -100,11 +118,7 @@
 
         /* --- BOTONES --- */
         .btn-group { display: flex; gap: 15px; max-width: 800px; margin: 30px auto; flex-wrap: wrap; }
-        .btn {
-            flex: 1; min-width: 250px; padding: 15px; font-size: 1rem; font-weight: bold;
-            border-radius: 8px; cursor: pointer; text-align: center; border: none; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+        .btn { flex: 1; min-width: 250px; padding: 15px; font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; text-align: center; border: none; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-whatsapp { background-color: var(--success); color: #fff; } .btn-whatsapp:hover { background-color: #1ebe57; transform: scale(1.02); }
         .btn-image { background-color: var(--primary); color: #000; } .btn-image:hover { background-color: var(--primary-hover); transform: scale(1.02); }
         .btn-add { background-color: #333; color: var(--primary); border: 1px solid var(--primary); padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: bold;}
@@ -114,48 +128,53 @@
 
         .download-controls { display: flex; flex: 1; min-width: 250px; gap: 10px; }
         .download-select { flex: 2; padding: 15px; background-color: #2a2a2a; color: var(--text-light); border: 2px solid var(--primary); border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; outline: none; }
-        .download-select:focus { box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
 
         /* --- DRAG AND DROP --- */
-        .planner-container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1400px; margin: 0 auto; animation: fadeIn 1s forwards; }
+        .planner-container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1400px; margin: 0 auto; }
         .roster-panel { flex: 1; min-width: 300px; background-color: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid #333; }
-        .roster-panel input[type="text"] { width: 100%; background: #2a2a2a; border: 1px solid #444; padding: 10px; border-radius: 6px; color: #fff; margin-bottom: 10px; }
+        .shows-panel { flex: 3; min-width: 300px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; align-items: start;}
         
-        .shows-panel { flex: 3; min-width: 300px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-        
-        .drop-zone {
-            background-color: var(--bg-zone); border: 2px dashed #555; border-radius: 8px;
-            min-height: 150px; padding: 15px; display: flex; flex-direction: column; gap: 10px; transition: 0.3s;
-        }
+        .drop-zone { background-color: var(--bg-zone); border: 2px dashed #555; border-radius: 8px; min-height: 120px; padding: 15px; display: flex; flex-direction: column; gap: 8px; transition: 0.3s; }
         .drop-zone.dragover { border-color: var(--primary); background-color: #2a2515; transform: scale(1.02); }
         
-        .show-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; padding-bottom: 8px; margin-bottom: 10px;}
-        .show-title-input { background: transparent; border: none; color: var(--primary); font-size: 1.1rem; font-weight: bold; width: 70%; }
+        .show-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; padding-bottom: 8px; margin-bottom: 5px;}
+        .show-title-input { background: transparent; border: none; color: var(--primary); font-size: 1.1rem; font-weight: bold; width: 70%; padding: 0;}
         .show-title-input:focus { outline: none; border-bottom: 1px solid var(--primary); }
 
-        .musician-tag {
-            background-color: #1a1a1a; border-left: 4px solid var(--primary); color: #fff;
-            padding: 10px 15px; border-radius: 4px; cursor: grab; font-size: 0.9rem;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3); user-select: none; transition: 0.2s;
-        }
+        .musician-tag { background-color: #1a1a1a; border-left: 4px solid var(--primary); color: #fff; padding: 8px 12px; border-radius: 4px; cursor: grab; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); user-select: none; transition: 0.2s; }
         .musician-tag:hover { transform: translateX(5px); background-color: #222; }
         .musician-tag:active { cursor: grabbing; transform: scale(0.95); }
         .delete-btn { color: #ff4444; cursor: pointer; font-weight: bold; margin-left: 10px; font-size: 1.2rem; padding: 0 5px;}
-        .delete-btn:hover { color: #ff0000; transform: scale(1.2); }
 
+        .gear-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px dashed #555; color: var(--primary); border-radius: 6px; padding: 10px; margin-top: 10px; font-size: 0.85rem; resize: vertical; min-height: 70px;}
+        .gear-input::placeholder { color: #888; font-style: italic; }
+        .gear-input:focus { border-color: var(--primary); background: #111; color: #fff;}
+
+        /* --- SETLIST COLABORATIVO --- */
+        .setlist-card { background: var(--bg-card); border: 1px solid #333; border-radius: 12px; padding: 20px; margin-bottom: 20px; position: relative; border-top: 4px solid #4CAF50;}
+        .sl-header { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; flex-wrap: wrap; gap: 10px;}
+        .sl-inputs-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;}
+        .sl-members { flex: 1; min-width: 200px; }
+        .url-wrapper { display: flex; gap: 5px; flex: 1; min-width: 250px;}
+        .sl-comments { width: 100%; min-height: 60px; margin-bottom: 15px; font-size: 0.9rem;}
+        
+        .etapa-box { background: rgba(255,255,255,0.02); border-left: 3px solid var(--primary); border-radius: 6px; padding: 15px; margin-bottom: 15px; }
+        .et-time { background: transparent; border: none; border-bottom: 1px solid #555; color: var(--primary); font-weight: bold; font-size: 1rem; width: 250px; padding: 5px; }
+        .et-time:focus { border-color: var(--primary); outline: none; }
+        
+        .song-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;}
+        .song-row input { flex: 1.5; min-width: 100px; padding: 8px; font-size: 0.9rem; background: #1a1a1a; border: 1px solid #333;}
+        .song-row input.sg-key { flex: 0.5; min-width: 60px; text-align: center; }
+        .song-row input.sg-url { flex: 1.5; min-width: 120px; }
+        
         /* --- HERRAMIENTAS --- */
-        .tools-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; animation: fadeIn 1s forwards; }
+        .tools-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; }
         .tool-card { background: var(--bg-card); border: 1px solid #333; border-radius: 12px; padding: 25px; display: flex; flex-direction: column; }
         .tool-title { color: var(--primary); font-size: 1.3rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;}
-        
-        /* Tool 1: Rentabilidad */
         .roi-box { background: #161616; padding: 15px; border-radius: 8px; text-align: center; margin-top: 15px; border: 1px solid #444;}
         .roi-number { font-size: 2.5rem; color: var(--primary); font-weight: bold; display: block; margin: 10px 0; transition: transform 0.2s;}
-        
-        /* Tool 2: Contrato */
         textarea.contract-area { width: 100%; height: 150px; background: #111; color: #ccc; border: 1px solid #444; border-radius: 8px; padding: 10px; resize: none; font-family: monospace; font-size: 0.85rem; margin-bottom: 10px;}
-        
+
         #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); border-bottom: 3px solid var(--primary); font-weight: bold; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
@@ -165,620 +184,604 @@
 
     <header>
         <h1>Dolce Ensamble 🎻🎷</h1>
-        <h2>Cotizador y Suite de Planeación - Cornalina</h2>
+        <h2>Centro de Operaciones - Cornalina</h2>
         <div class="sync-status">
             <div id="sync-dot" class="sync-dot"></div>
             <span id="sync-text">Conectando a Firebase...</span>
         </div>
     </header>
 
-    <div class="controls-panel fade-in">
-        <div class="input-group">
-            <label>Tarifa Hora/Músico 💵</label>
-            <div class="input-wrapper">
-                <span>$</span>
-                <input type="number" id="rate" value="400" step="50" oninput="window.handleInput()">
-            </div>
-        </div>
-        <div class="input-group">
-            <label>Traslado/Músico 🚗</label>
-            <div class="input-wrapper">
-                <span>$</span>
-                <input type="number" id="travel" value="150" step="50" oninput="window.handleInput()">
-            </div>
-        </div>
-        <div class="input-group">
-            <label>Audio & Gestión 🎛️</label>
-            <div class="input-wrapper">
-                <span>$</span>
-                <input type="number" id="fee" value="500" step="100" oninput="window.handleInput()">
-            </div>
-        </div>
+    <!-- NAVEGACIÓN POR PESTAÑAS -->
+    <div class="tabs-nav fade-in">
+        <button class="tab-btn active" onclick="window.switchTab('tab-finanzas')">📋 Logística y Finanzas</button>
+        <button class="tab-btn" onclick="window.switchTab('tab-planeador')">🗓️ Planeador (Asignación)</button>
+        <button class="tab-btn" onclick="window.switchTab('tab-setlist')">🎵 Setlist Colaborativo</button>
+        <button class="tab-btn" onclick="window.switchTab('tab-herramientas')">🛠️ Herramientas Negocio</button>
     </div>
 
-    <!-- Área Exportable de Propuestas -->
-    <div id="export-area" style="padding: 10px; background: var(--bg-dark); border-radius: 12px;">
-        <div class="cards-grid">
-            
-            <!-- P1 -->
-            <div class="card fade-in delay-1" id="card1">
-                <input type="text" class="editable-title" id="p1-title" value="1. Doble Turno Premium 🌟" oninput="window.handleInput()">
-                <div class="card-badge">
-                    ⏱️ <input type="number" class="editable-hour" id="p1-h1" value="3" oninput="window.handleInput()">h + 
-                    <input type="number" class="editable-hour" id="p1-h2" value="3" oninput="window.handleInput()">h
+    <!-- PESTAÑA 1: LOGÍSTICA Y FINANZAS -->
+    <div id="tab-finanzas" class="tab-content active">
+        <h3 class="section-title" style="margin-top:0;">📍 Hoja de Ruta Logística</h3>
+        <div class="panel-box">
+            <div class="logistics-grid">
+                <div class="input-group">
+                    <label>Código de Vestimenta 👔</label>
+                    <input type="text" id="logistics-dress" value="Total Black Elegante" oninput="window.triggerSave()">
                 </div>
-                <select id="format1" class="card-select" onchange="window.handleInput()">
-                    <option value="2">Dueto (2 pax x turno)</option>
-                    <option value="3" selected>Trío (3 pax x turno)</option>
+                <div class="input-group">
+                    <label>Hora de Llegada (Call Time) ⏰</label>
+                    <input type="text" id="logistics-time" value="5:30 PM" oninput="window.triggerSave()">
+                </div>
+                <div class="input-group">
+                    <label>Lugar 🏢</label>
+                    <input type="text" id="logistics-loc" value="Cornalina MX" oninput="window.triggerSave()">
+                </div>
+                <div class="input-group" style="grid-column: span 2;">
+                    <label>Dirección 🗺️</label>
+                    <input type="text" id="logistics-addr" value="Calle Dr. Francisco L. Rocha 204, San Jerónimo, 64640 Monterrey, N.L." oninput="window.triggerSave()">
+                </div>
+                <div class="input-group">
+                    <label style="color:transparent;">Maps</label>
+                    <a id="logistics-maps" href="https://maps.app.goo.gl/fNNzqCxii8xqH1cg7" target="_blank" class="btn-maps">📍 Abrir Google Maps</a>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="section-title">💰 Cotizador Financiero</h3>
+        <div class="panel-box" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+            <div class="input-group center" style="width: auto;">
+                <label>Tarifa Hora/Músico 💵</label>
+                <div class="input-wrapper"><span class="currency">$</span><input type="number" id="rate" value="400" step="50" oninput="window.handleInput()"></div>
+            </div>
+            <div class="input-group center" style="width: auto;">
+                <label>Traslado/Músico 🚗</label>
+                <div class="input-wrapper"><span class="currency">$</span><input type="number" id="travel" value="150" step="50" oninput="window.handleInput()"></div>
+            </div>
+            <div class="input-group center" style="width: auto;">
+                <label>Audio & Gestión 🎛️</label>
+                <div class="input-wrapper"><span class="currency">$</span><input type="number" id="fee" value="500" step="100" oninput="window.handleInput()"></div>
+            </div>
+        </div>
+
+        <!-- Área Exportable de Propuestas -->
+        <div id="export-area" style="padding: 10px; background: var(--bg-dark); border-radius: 12px;">
+            <div class="cards-grid">
+                <!-- P1 -->
+                <div class="card" id="card1">
+                    <input type="text" class="editable-title" id="p1-title" value="1. Doble Turno Premium 🌟" oninput="window.handleInput()">
+                    <div class="card-badge">⏱️ <input type="number" class="editable-hour" id="p1-h1" value="3" oninput="window.handleInput()">h + <input type="number" class="editable-hour" id="p1-h2" value="3" oninput="window.handleInput()">h</div>
+                    <select id="format1" class="card-select" onchange="window.handleInput()">
+                        <option value="2">Dueto (2 pax x turno)</option>
+                        <option value="3" selected>Trío (3 pax x turno)</option>
+                    </select>
+                    <div class="results-box">
+                        <div class="result-row"><span class="result-label" id="lbl-p1-pay">Pago Músicos:</span><span class="result-value" id="p1-pay">--</span></div>
+                        <div class="sub-row"><span id="p1-desc">--</span></div>
+                        <div class="result-row"><span class="result-label">Traslados Totales:</span><span class="result-value" id="p1-travel">--</span></div>
+                        <div class="total-row"><span class="result-label">Total Noche:</span><span class="result-value" id="p1-total">--</span></div>
+                    </div>
+                </div>
+                <!-- P2 -->
+                <div class="card" id="card2">
+                    <input type="text" class="editable-title" id="p2-title" value="2. Formato Continuo ♾️" oninput="window.handleInput()">
+                    <div class="card-badge">⏱️ <input type="number" class="editable-hour" id="p2-h" value="6" oninput="window.handleInput()"> hrs continuas</div>
+                    <select id="format2" class="card-select" onchange="window.handleInput()">
+                        <option value="2">Dueto (2 pax total)</option>
+                        <option value="3" selected>Trío (3 pax total)</option>
+                    </select>
+                    <div class="results-box">
+                        <div class="result-row"><span class="result-label" id="lbl-p2-pay">Pago Músicos:</span><span class="result-value" id="p2-pay">--</span></div>
+                        <div class="sub-row"><span id="p2-desc">--</span></div>
+                        <div class="result-row"><span class="result-label">Traslados Totales:</span><span class="result-value" id="p2-travel">--</span></div>
+                        <div class="total-row"><span class="result-label">Total Noche:</span><span class="result-value" id="p2-total">--</span></div>
+                    </div>
+                </div>
+                <!-- P3 -->
+                <div class="card" id="card3">
+                    <input type="text" class="editable-title" id="p3-title" value="3. Modelo Escalable 📈" oninput="window.handleInput()">
+                    <div class="card-badge">⏱️ <input type="number" class="editable-hour" id="p3-h1" value="2" oninput="window.handleInput()">h Solista + <input type="number" class="editable-hour" id="p3-h2" value="4" oninput="window.handleInput()">h Ensamble</div>
+                    <select id="format3" class="card-select" onchange="window.handleInput()">
+                        <option value="2">Dueto Final (1 Ancla + 1 Inv)</option>
+                        <option value="3" selected>Trío Final (1 Ancla + 2 Inv)</option>
+                    </select>
+                    <div class="results-box">
+                        <div class="result-row"><span class="result-label" id="lbl-p3-g">Invitados:</span><span class="result-value" id="p3-guest-pay">--</span></div>
+                        <div class="result-row"><span class="result-label" id="lbl-p3-a">Ancla:</span><span class="result-value" id="p3-anchor-pay">--</span></div>
+                        <div class="result-row"><span class="result-label">Traslados Totales:</span><span class="result-value" id="p3-travel">--</span></div>
+                        <div class="total-row"><span class="result-label">Total Noche:</span><span class="result-value" id="p3-total">--</span></div>
+                    </div>
+                </div>
+                <!-- P4 -->
+                <div class="card" id="card4">
+                    <input type="text" class="editable-title" id="p4-title" value="4. Relevo Total 🔄" oninput="window.handleInput()">
+                    <div class="card-badge">⏱️ <input type="number" class="editable-hour" id="p4-h1" value="2" oninput="window.handleInput()">h Solista ➔ <input type="number" class="editable-hour" id="p4-h2" value="4" oninput="window.handleInput()">h Banda</div>
+                    <select id="format4" class="card-select" onchange="window.handleInput()">
+                        <option value="2">Banda Cierre: Dueto</option>
+                        <option value="3" selected>Banda Cierre: Trío</option>
+                    </select>
+                    <div class="results-box">
+                        <div class="result-row"><span class="result-label" id="lbl-p4-s">Solista:</span><span class="result-value" id="p4-solo-pay">--</span></div>
+                        <div class="result-row"><span class="result-label" id="lbl-p4-b">Banda Cierre:</span><span class="result-value" id="p4-band-pay">--</span></div>
+                        <div class="result-row"><span class="result-label">Traslados Totales:</span><span class="result-value" id="p4-travel">--</span></div>
+                        <div class="total-row"><span class="result-label">Total Noche:</span><span class="result-value" id="p4-total">--</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-whatsapp" onclick="window.copyToClipboard()">📱 Copiar Precios (WhatsApp)</button>
+            <div class="download-controls">
+                <select id="download-select" class="download-select">
+                    <option value="export-area">📸 Todas las Propuestas</option>
+                    <option value="card1">📸 Solo Propuesta 1</option>
+                    <option value="card2">📸 Solo Propuesta 2</option>
+                    <option value="card3">📸 Solo Propuesta 3</option>
+                    <option value="card4">📸 Solo Propuesta 4</option>
                 </select>
-                <div class="results-box">
-                    <div class="result-row"><span class="result-label" id="lbl-p1-pay">Pago Músicos:</span><span class="result-value" id="p1-pay">--</span></div>
-                    <div class="sub-row"><span id="p1-desc">--</span></div>
-                    <div class="result-row"><span class="result-label">Traslados Totales:</span><span class="result-value" id="p1-travel">--</span></div>
-                    <div class="total-row"><span class="result-label">Total Noche:</span><span class="result-value" id="p1-total">--</span></div>
+                <button class="btn btn-image" onclick="window.downloadImage()" style="flex: 1;">Descargar</button>
+            </div>
+        </div>
+    </div> <!-- Fin Pestaña 1 -->
+
+    <!-- PESTAÑA 2: DRAG AND DROP -->
+    <div id="tab-planeador" class="tab-content">
+        <h3 class="section-title" style="margin-top:0;">🗓️ Planeador Mensual de Shows</h3>
+        <div class="planner-container">
+            <!-- Roster -->
+            <div class="roster-panel">
+                <h4 style="color:var(--primary); margin-bottom:15px; border-bottom:1px solid #444; padding-bottom:10px;">🎶 Tu Roster / Músicos</h4>
+                <input type="text" id="musicianName" placeholder="Nombre (ej. Rolando)">
+                <input type="text" id="musicianInst" placeholder="Instrumento (ej. Saxofón)">
+                <button class="btn btn-add" onclick="window.addMusician()" style="width:100%; padding:10px; margin-bottom: 20px;">+ Añadir Músico</button>
+                <div class="drop-zone" id="roster-zone" ondrop="window.drop(event)" ondragover="window.allowDrop(event)" ondragenter="window.dragEnter(event)" ondragleave="window.dragLeave(event)">
+                    <div style="text-align:center; color:#777; font-size:0.85rem; margin-bottom:5px;">Arrastra músicos hacia los shows.<br>(Se crearán copias)</div>
                 </div>
             </div>
-
-            <!-- P2 -->
-            <div class="card fade-in delay-2" id="card2">
-                <input type="text" class="editable-title" id="p2-title" value="2. Formato Continuo ♾️" oninput="window.handleInput()">
-                <div class="card-badge">
-                    ⏱️ <input type="number" class="editable-hour" id="p2-h" value="6" oninput="window.handleInput()"> hrs continuas
+            <!-- Panel de Shows -->
+            <div style="flex: 3; display: flex; flex-direction: column; gap: 15px;">
+                <div style="display:flex; justify-content: space-between; align-items: center;">
+                    <h4 style="color:var(--primary);">Escenarios / Viernes</h4>
+                    <button class="btn-danger" onclick="window.addShowZone()" style="border-color: var(--primary); color: var(--primary);">+ Añadir Nuevo Show</button>
                 </div>
-                <select id="format2" class="card-select" onchange="window.handleInput()">
-                    <option value="2">Dueto (2 pax total)</option>
-                    <option value="3" selected>Trío (3 pax total)</option>
+                <div class="shows-panel" id="shows-container">
+                    <!-- Se poblarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div> <!-- Fin Pestaña 2 -->
+
+    <!-- PESTAÑA 3: SETLIST COLABORATIVO -->
+    <div id="tab-setlist" class="tab-content">
+        <h3 class="section-title" style="margin-top:0;">🎵 Creador de Setlist Colaborativo</h3>
+        <div style="text-align: right; max-width: 1400px; margin: 0 auto 15px auto;">
+            <button class="btn-add" style="padding: 12px 24px; font-size:1.1rem;" onclick="window.addSetlist()">+ Añadir Ficha de Show / Repertorio</button>
+        </div>
+        <div class="planner-container" id="setlists-container" style="flex-direction: column;">
+            <!-- Se poblarán dinámicamente -->
+        </div>
+    </div> <!-- Fin Pestaña 3 -->
+
+    <!-- PESTAÑA 4: HERRAMIENTAS ADICIONALES -->
+    <div id="tab-herramientas" class="tab-content">
+        <h3 class="section-title" style="margin-top:0;">🛠️ Herramientas para el Negocio</h3>
+        <div class="tools-container">
+            <div class="tool-card">
+                <h3 class="tool-title">📈 Rentabilidad por Mesa</h3>
+                <p style="font-size:0.85rem; color:#aaa; margin-bottom:10px;">Calcula cuánto debe vender el restaurante para cubrir la música.</p>
+                <label style="color:var(--primary); font-size:0.9rem;">Ticket Promedio por Persona ($)</label>
+                <input type="number" id="ticketAvg" value="500" step="50" oninput="window.calculateROI()" style="width:100%; padding:10px; margin-bottom:15px; text-align:left;">
+                <label style="color:var(--primary); font-size:0.9rem;">Analizar Propuesta:</label>
+                <select id="roi-prop" class="card-select" onchange="window.calculateROI()">
+                    <option value="1">Propuesta 1</option><option value="2">Propuesta 2</option><option value="3" selected>Propuesta 3</option><option value="4">Propuesta 4</option>
                 </select>
-                <div class="results-box">
-                    <div class="result-row"><span class="result-label" id="lbl-p2-pay">Pago Músicos:</span><span class="result-value" id="p2-pay">--</span></div>
-                    <div class="sub-row"><span id="p2-desc">--</span></div>
-                    <div class="result-row"><span class="result-label">Traslados Totales:</span><span class="result-value" id="p2-travel">--</span></div>
-                    <div class="total-row"><span class="result-label">Total Noche:</span><span class="result-value" id="p2-total">--</span></div>
+                <div class="roi-box">
+                    <span>Necesitan el consumo de</span>
+                    <span class="roi-number" id="roi-result">0</span>
+                    <span>personas para pagar el show.</span>
                 </div>
             </div>
-
-            <!-- P3 -->
-            <div class="card fade-in delay-3" id="card3">
-                <input type="text" class="editable-title" id="p3-title" value="3. Modelo Escalable 📈" oninput="window.handleInput()">
-                <div class="card-badge">
-                    ⏱️ <input type="number" class="editable-hour" id="p3-h1" value="2" oninput="window.handleInput()">h Solista + 
-                    <input type="number" class="editable-hour" id="p3-h2" value="4" oninput="window.handleInput()">h Ensamble
-                </div>
-                <select id="format3" class="card-select" onchange="window.handleInput()">
-                    <option value="2">Dueto Final (1 Ancla + 1 Inv)</option>
-                    <option value="3" selected>Trío Final (1 Ancla + 2 Inv)</option>
+            <div class="tool-card">
+                <h3 class="tool-title">📝 Creador de Acuerdos</h3>
+                <p style="font-size:0.85rem; color:#aaa; margin-bottom:10px;">Genera un texto formal para confirmar el trato.</p>
+                <select id="contract-prop" class="card-select" onchange="window.generateContract()">
+                    <option value="1">Acuerdo Propuesta 1</option><option value="2">Acuerdo Propuesta 2</option><option value="3" selected>Acuerdo Propuesta 3</option><option value="4">Acuerdo Propuesta 4</option>
                 </select>
-                <div class="results-box">
-                    <div class="result-row"><span class="result-label" id="lbl-p3-g">Invitados:</span><span class="result-value" id="p3-guest-pay">--</span></div>
-                    <div class="result-row"><span class="result-label" id="lbl-p3-a">Ancla:</span><span class="result-value" id="p3-anchor-pay">--</span></div>
-                    <div class="result-row"><span class="result-label">Traslados Totales:</span><span class="result-value" id="p3-travel">--</span></div>
-                    <div class="total-row"><span class="result-label">Total Noche:</span><span class="result-value" id="p3-total">--</span></div>
-                </div>
-            </div>
-
-            <!-- P4 -->
-            <div class="card fade-in delay-3" id="card4">
-                <input type="text" class="editable-title" id="p4-title" value="4. Relevo Total 🔄" oninput="window.handleInput()">
-                <div class="card-badge">
-                    ⏱️ <input type="number" class="editable-hour" id="p4-h1" value="2" oninput="window.handleInput()">h Solista ➔ 
-                    <input type="number" class="editable-hour" id="p4-h2" value="4" oninput="window.handleInput()">h Banda
-                </div>
-                <select id="format4" class="card-select" onchange="window.handleInput()">
-                    <option value="2">Banda Cierre: Dueto</option>
-                    <option value="3" selected>Banda Cierre: Trío</option>
-                </select>
-                <div class="results-box">
-                    <div class="result-row"><span class="result-label" id="lbl-p4-s">Solista:</span><span class="result-value" id="p4-solo-pay">--</span></div>
-                    <div class="result-row"><span class="result-label" id="lbl-p4-b">Banda Cierre:</span><span class="result-value" id="p4-band-pay">--</span></div>
-                    <div class="result-row"><span class="result-label">Traslados Totales:</span><span class="result-value" id="p4-travel">--</span></div>
-                    <div class="total-row"><span class="result-label">Total Noche:</span><span class="result-value" id="p4-total">--</span></div>
-                </div>
-            </div>
-
-        </div>
-    </div> <!-- Fin área exportable -->
-
-    <div class="btn-group fade-in">
-        <button class="btn btn-whatsapp" onclick="window.copyToClipboard()">📱 Copiar Texto (WhatsApp)</button>
-        <div class="download-controls">
-            <select id="download-select" class="download-select">
-                <option value="export-area">📸 Todas las Propuestas</option>
-                <option value="card1">📸 Solo Propuesta 1</option>
-                <option value="card2">📸 Solo Propuesta 2</option>
-                <option value="card3">📸 Solo Propuesta 3</option>
-                <option value="card4">📸 Solo Propuesta 4</option>
-            </select>
-            <button class="btn btn-image" onclick="window.downloadImage()" style="flex: 1;">Descargar</button>
-        </div>
-    </div>
-
-    <!-- SECCIÓN DRAG AND DROP -->
-    <h3 class="section-title fade-in" style="margin-top:60px;">🗓️ Planeador Mensual de Shows (Drag & Drop)</h3>
-    <div class="planner-container">
-        
-        <!-- Roster -->
-        <div class="roster-panel">
-            <h4 style="color:var(--primary); margin-bottom:15px; border-bottom:1px solid #444; padding-bottom:10px;">🎶 Tu Roster / Músicos</h4>
-            <input type="text" id="musicianName" placeholder="Nombre (ej. Rolando)">
-            <input type="text" id="musicianInst" placeholder="Instrumento (ej. Saxofón)">
-            <button class="btn btn-add" onclick="window.addMusician()" style="width:100%; padding:10px; margin-bottom: 20px;">+ Añadir Músico</button>
-            
-            <div class="drop-zone" id="roster-zone" ondrop="window.drop(event)" ondragover="window.allowDrop(event)" ondragenter="window.dragEnter(event)" ondragleave="window.dragLeave(event)">
-                <div style="text-align:center; color:#777; font-size:0.85rem; margin-bottom:5px;">
-                    Arrastra músicos hacia los shows.<br>(Se crearán copias automáticamente)
-                </div>
-                <!-- Los precargados se insertarán dinámicamente si no hay estado en la BD -->
+                <textarea id="contract-text" class="contract-area" readonly></textarea>
+                <button class="btn btn-add" style="width:100%;" onclick="window.copyContract()">📋 Copiar Acuerdo</button>
             </div>
         </div>
-
-        <!-- Panel de Shows Dinámicos -->
-        <div style="flex: 3; display: flex; flex-direction: column; gap: 15px;">
-            <div style="display:flex; justify-content: space-between; align-items: center;">
-                <h4 style="color:var(--primary);">Escenarios / Viernes</h4>
-                <button class="btn-danger" onclick="window.addShowZone()" style="border-color: var(--primary); color: var(--primary);">+ Añadir Nuevo Show</button>
-            </div>
-            
-            <div class="shows-panel" id="shows-container">
-                <!-- Se poblarán dinámicamente desde Firebase -->
-            </div>
-        </div>
-
-    </div>
-
-    <!-- SECCIÓN DE HERRAMIENTAS ADICIONALES -->
-    <h3 class="section-title fade-in" style="margin-top:60px;">🛠️ Herramientas para el Negocio</h3>
-    <div class="tools-container fade-in">
-        
-        <!-- Rentabilidad -->
-        <div class="tool-card">
-            <h3 class="tool-title">📈 Rentabilidad por Mesa</h3>
-            <p style="font-size:0.85rem; color:#aaa; margin-bottom:10px;">Calcula cuánto debe vender el restaurante para cubrir la música.</p>
-            <label style="color:var(--primary); font-size:0.9rem;">Ticket Promedio por Persona ($)</label>
-            <input type="number" id="ticketAvg" value="500" step="50" oninput="window.calculateROI()" style="width:100%; padding:10px; border-radius:6px; background:#2a2a2a; border:1px solid #444; color:#fff; margin-bottom:15px;">
-            <label style="color:var(--primary); font-size:0.9rem;">Analizar Propuesta:</label>
-            <select id="roi-prop" class="card-select" onchange="window.calculateROI()">
-                <option value="1">Propuesta 1</option>
-                <option value="2">Propuesta 2</option>
-                <option value="3" selected>Propuesta 3</option>
-                <option value="4">Propuesta 4</option>
-            </select>
-            <div class="roi-box">
-                <span>Necesitan el consumo de</span>
-                <span class="roi-number" id="roi-result">0</span>
-                <span>personas para pagar el show.</span>
-            </div>
-        </div>
-
-        <!-- Contratos -->
-        <div class="tool-card">
-            <h3 class="tool-title">📝 Creador de Acuerdos</h3>
-            <p style="font-size:0.85rem; color:#aaa; margin-bottom:10px;">Genera un texto formal para confirmar el trato.</p>
-            <select id="contract-prop" class="card-select" onchange="window.generateContract()">
-                <option value="1">Acuerdo Propuesta 1</option>
-                <option value="2">Acuerdo Propuesta 2</option>
-                <option value="3" selected>Acuerdo Propuesta 3</option>
-                <option value="4">Acuerdo Propuesta 4</option>
-            </select>
-            <textarea id="contract-text" class="contract-area" readonly></textarea>
-            <button class="btn btn-add" style="width:100%;" onclick="window.copyContract()">📋 Copiar Acuerdo</button>
-        </div>
-
-    </div>
+    </div> <!-- Fin Pestaña 4 -->
 
     <div id="toast">Notificación</div>
 
-    <!-- CÓDIGO FUNCIONAL CON FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Configuración de Firebase del usuario
         const firebaseConfig = {
             apiKey: "AIzaSyDTaHdorgZ1PfOBqNOme069JsBfkaL6qnM",
             authDomain: "gestioncornalina-concerts.firebaseapp.com",
             projectId: "gestioncornalina-concerts",
             storageBucket: "gestioncornalina-concerts.firebasestorage.app",
             messagingSenderId: "526772028347",
-            appId: "1:526772028347:web:2e1b630318a4d5d8a27a9e",
-            measurementId: "G-67TKNN7R7P"
+            appId: "1:526772028347:web:2e1b630318a4d5d8a27a9e"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const docRef = doc(db, 'artifacts', 'gestioncornalina', 'public', 'data', 'appState', 'currentState');
 
-        // Referencia estricta para persistencia
-        const appIdString = "gestioncornalina";
-        const docRef = doc(db, 'artifacts', appIdString, 'public', 'data', 'appState', 'currentState');
-
-        // Variables Globales
         const formatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 });
         let dataStore = {};
-        window.showCounter = 5;
-        let cloneCounter = 0;
-
-        let isApplyingState = false; // Bandera para evitar bucle infinito de guardado
+        let isApplyingState = false;
         let saveTimeout = null;
 
-        // --- FUNCIONES EXPUESTAS A WINDOW (Para el HTML) ---
-        
-        window.handleInput = () => {
-            calculateMath();
-            window.triggerSave();
-        };
+        // IDs Autogenerados
+        window.showCounter = 1;
+        window.setlistCounter = 1;
+        window.etapaCounter = 1;
+        window.songCounter = 1;
+        let cloneCounter = 0;
 
-        window.calculateROI = () => {
-            if(!dataStore.p1) return;
-            const ticket = parseFloat(document.getElementById('ticketAvg').value) || 1;
-            const sel = document.getElementById('roi-prop').value;
-            const total = dataStore['p'+sel].costNum;
-            const peopleNeeded = Math.ceil(total / ticket);
+        // --- MANEJO DE PESTAÑAS (TABS) ---
+        window.switchTab = (tabId) => {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            // Deseleccionar botones
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            // Activar el tab seleccionado
+            document.getElementById(tabId).classList.add('active');
+            // Activar botón correspondiente
+            const btn = document.querySelector(`.tab-btn[onclick="window.switchTab('${tabId}')"]`);
+            if(btn) btn.classList.add('active');
             
-            const el = document.getElementById('roi-result');
-            el.innerText = peopleNeeded;
-            el.style.transform = "scale(1.2)";
-            setTimeout(() => el.style.transform = "scale(1)", 200);
+            // Para html2canvas: Si se va a renderizar, es mejor que las secciones estén visibles en el DOM. 
+            // Html2canvas no toma display:none. Las funciones de renderizado forzarán el cambio de tab temporalmente si es necesario.
         };
 
-        window.generateContract = () => {
-            if(!dataStore.p1) return;
-            const sel = document.getElementById('contract-prop').value;
-            const prop = dataStore['p'+sel];
-            
-            const text = 
-`ACUERDO DE PRESTACIÓN DE SERVICIOS MUSICALES
---------------------------------------------
-Fecha: ${new Date().toLocaleDateString('es-MX')}
-Cliente: Restaurante Cornalina
-Agencia: Dolce Ensamble (Rolando)
-
-1. SERVICIO: El Proveedor (Dolce Ensamble) se compromete a proveer talento musical bajo el formato "${prop.name}".
-2. HORARIOS: Se respetará el estándar de 50 minutos de música por 10 minutos de descanso por cada hora contratada.
-3. INVERSIÓN: El Cliente se compromete a pagar la cantidad de ${prop.cost} MXN netos por evento pactado. Este monto incluye honorarios de músicos, traslados, equipo de audio premium y gestión directiva.
-4. AUDIO: El proveedor conectará su equipo propio asegurando la calidad acústica idónea para el lugar.
-
-Firma Cliente: _____________________
-Firma Dolce Ensamble: _____________________`;
-
-            document.getElementById('contract-text').value = text;
-        };
-
-        window.copyContract = () => {
-            const el = document.getElementById('contract-text');
-            el.select(); document.execCommand('copy');
-            showToast("📝 Contrato copiado. Listo para enviar.");
-        };
-
-        window.copyToClipboard = () => {
-            const r = document.getElementById('rate').value;
-            const t = document.getElementById('travel').value;
-            const f = document.getElementById('fee').value;
-            const text = `*Cotización Dolce Ensamble* 🎻\nTarifa Músico: $${r}/h | Traslado: $${t} | Audio/Gestión: $${f}\n\n` +
-                         `*${dataStore.p1.name}:* ${dataStore.p1.cost}\n*${dataStore.p2.name}:* ${dataStore.p2.cost}\n` +
-                         `*${dataStore.p3.name}:* ${dataStore.p3.cost}\n*${dataStore.p4.name}:* ${dataStore.p4.cost}\n`;
-            const el = document.createElement('textarea');
-            el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-            showToast("📱 Precios copiados para WhatsApp!");
-        };
-
-        window.downloadImage = () => {
-            const selection = document.getElementById('download-select').value;
-            const targetId = selection === 'export-area' ? 'export-area' : selection;
-            const element = document.getElementById(targetId);
-            
-            showToast("📸 Capturando imagen...");
-            html2canvas(element, { backgroundColor: '#121212', scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = selection === 'export-area' ? 'Propuestas_Dolce_Ensamble.png' : `Propuesta_${selection}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                showToast("✅ Imagen guardada.");
-            });
-        };
-
-        window.addShowZone = () => {
-            const container = document.getElementById('shows-container');
-            const newId = 'show' + window.showCounter++;
-            const div = document.createElement('div');
-            div.className = 'drop-zone show-zone fade-in';
-            div.id = newId;
-            
-            div.ondrop = window.drop; div.ondragover = window.allowDrop; div.ondragenter = window.dragEnter; div.ondragleave = window.dragLeave;
-            
-            div.innerHTML = `
-                <div class="show-header">
-                    <input type="text" class="show-title-input" value="✨ Nuevo Show" oninput="window.triggerSave()">
-                    <button class="btn-danger" onclick="window.deleteZone('${newId}')">✖</button>
-                </div>
-            `;
-            container.appendChild(div);
-            window.triggerSave();
-        };
-
-        window.deleteZone = (id) => {
-            if(confirm("¿Borrar este escenario y sus músicos asignados?")) {
-                document.getElementById(id).remove();
-                window.triggerSave();
+        // --- FUNCIONES BÁSICAS ---
+        window.handleInput = () => { calculateMath(); window.triggerSave(); };
+        window.removeElementById = (id) => { 
+            if(confirm("¿Estás seguro de eliminar este elemento?")) {
+                const el = document.getElementById(id);
+                if(el) el.remove(); 
+                window.triggerSave(); 
             }
         };
-
-        window.addMusician = () => {
-            const name = document.getElementById('musicianName').value.trim();
-            const inst = document.getElementById('musicianInst').value.trim();
-            if(!name) { alert("Escribe un nombre."); return; }
-            
-            const id = 'custom_m' + Date.now();
-            const text = inst ? `${name} (${inst})` : name;
-            
-            document.getElementById('roster-zone').appendChild(createMusicianTag(id, text));
-            document.getElementById('musicianName').value = ''; document.getElementById('musicianInst').value = '';
-            window.triggerSave();
+        window.openLink = (url) => {
+            if(!url || url.trim() === '') { alert("Primero ingresa una URL válida (ej. Google Drive o Youtube)."); return; }
+            if(!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+            window.open(url, '_blank');
         };
 
-        window.removeTag = (btnElement) => {
-            btnElement.parentNode.remove();
-            window.triggerSave();
-        };
-
-        // --- LOGICA MATEMÁTICA ---
+        // --- CÁLCULOS FINANCIEROS ---
         function calculateMath() {
             const rate = parseFloat(document.getElementById('rate').value) || 0;
             const fee = parseFloat(document.getElementById('fee').value) || 0;
             const travel = parseFloat(document.getElementById('travel').value) || 0;
 
-            // P1
-            const t1 = document.getElementById('p1-title').value;
-            const f1 = parseInt(document.getElementById('format1').value);
-            const h1_1 = parseFloat(document.getElementById('p1-h1').value) || 0;
-            const h1_2 = parseFloat(document.getElementById('p1-h2').value) || 0;
-            const p1TotalMusicians = f1 * 2; 
-            
-            const payTurno1 = rate * h1_1 * f1;
-            const payTurno2 = rate * h1_2 * f1;
-            const p1TotalPay = payTurno1 + payTurno2;
-            const p1TravelCost = p1TotalMusicians * travel;
-            const p1Total = p1TotalPay + p1TravelCost + fee;
-            
-            document.getElementById('lbl-p1-pay').innerText = `Músicos (${h1_1}h+${h1_2}h):`;
-            document.getElementById('p1-pay').innerText = formatter.format(p1TotalPay);
-            document.getElementById('p1-desc').innerText = `(Turno 1: ${formatter.format(payTurno1)} | Turno 2: ${formatter.format(payTurno2)})`;
-            document.getElementById('p1-travel').innerText = formatter.format(p1TravelCost) + ` (${p1TotalMusicians} viajes)`;
-            document.getElementById('p1-total').innerText = formatter.format(p1Total);
+            const configs = [
+                { id: 1, type: 'split' }, { id: 2, type: 'continuous' },
+                { id: 3, type: 'anchor' }, { id: 4, type: 'relay' }
+            ];
 
-            // P2
-            const t2 = document.getElementById('p2-title').value;
-            const f2 = parseInt(document.getElementById('format2').value);
-            const h2 = parseFloat(document.getElementById('p2-h').value) || 0;
-            const p2Pay = rate * h2;
-            const p2TravelCost = f2 * travel;
-            const p2Total = (f2 * p2Pay) + p2TravelCost + fee;
-            
-            document.getElementById('lbl-p2-pay').innerText = `Músicos (x${h2}h):`;
-            document.getElementById('p2-pay').innerText = formatter.format(p2Pay);
-            document.getElementById('p2-desc').innerText = `(${f2} músicos)`;
-            document.getElementById('p2-travel').innerText = formatter.format(p2TravelCost) + ` (${f2} viajes)`;
-            document.getElementById('p2-total').innerText = formatter.format(p2Total);
+            configs.forEach(cfg => {
+                const i = cfg.id;
+                const t = document.getElementById(`p${i}-title`).value;
+                const f = parseInt(document.getElementById(`format${i}`).value);
+                let costNum = 0;
+                
+                if(cfg.type === 'split') {
+                    const h1 = parseFloat(document.getElementById(`p${i}-h1`).value)||0;
+                    const h2 = parseFloat(document.getElementById(`p${i}-h2`).value)||0;
+                    const p1TotalPay = (rate * h1 * f) + (rate * h2 * f);
+                    const p1Travel = (f * 2) * travel;
+                    costNum = p1TotalPay + p1Travel + fee;
+                    document.getElementById(`lbl-p${i}-pay`).innerText = `Músicos (${h1}h+${h2}h):`;
+                    document.getElementById(`p${i}-pay`).innerText = formatter.format(p1TotalPay);
+                    document.getElementById(`p${i}-desc`).innerText = `(Turno 1: ${formatter.format(rate*h1*f)} | Turno 2: ${formatter.format(rate*h2*f)})`;
+                    document.getElementById(`p${i}-travel`).innerText = formatter.format(p1Travel) + ` (${f*2} viajes)`;
+                } 
+                else if (cfg.type === 'continuous') {
+                    const h = parseFloat(document.getElementById(`p${i}-h`).value)||0;
+                    const pay = rate * h;
+                    const travelCost = f * travel;
+                    costNum = (f * pay) + travelCost + fee;
+                    document.getElementById(`lbl-p${i}-pay`).innerText = `Músicos (x${h}h):`;
+                    document.getElementById(`p${i}-pay`).innerText = formatter.format(pay);
+                    document.getElementById(`p${i}-desc`).innerText = `(${f} músicos)`;
+                    document.getElementById(`p${i}-travel`).innerText = formatter.format(travelCost) + ` (${f} viajes)`;
+                }
+                else if (cfg.type === 'anchor') {
+                    const h_anc = parseFloat(document.getElementById(`p${i}-h1`).value) + parseFloat(document.getElementById(`p${i}-h2`).value);
+                    const h_gst = parseFloat(document.getElementById(`p${i}-h2`).value)||0;
+                    const ancPay = rate * h_anc; const gstPay = rate * h_gst;
+                    const travelCost = f * travel;
+                    costNum = ancPay + ((f-1)*gstPay) + travelCost + fee;
+                    document.getElementById(`p${i}-guest-pay`).innerText = formatter.format(gstPay);
+                    document.getElementById(`p${i}-anchor-pay`).innerText = formatter.format(ancPay);
+                    document.getElementById(`p${i}-travel`).innerText = formatter.format(travelCost) + ` (${f} viajes)`;
+                }
+                else if (cfg.type === 'relay') {
+                    const hs = parseFloat(document.getElementById(`p${i}-h1`).value)||0;
+                    const hb = parseFloat(document.getElementById(`p${i}-h2`).value)||0;
+                    const sPay = rate * hs; const bPay = rate * hb;
+                    const travelCost = (1+f) * travel;
+                    costNum = sPay + (f*bPay) + travelCost + fee;
+                    document.getElementById(`p${i}-solo-pay`).innerText = formatter.format(sPay);
+                    document.getElementById(`p${i}-band-pay`).innerText = formatter.format(bPay) + ` (x${f})`;
+                    document.getElementById(`p${i}-travel`).innerText = formatter.format(travelCost) + ` (${1+f} viajes)`;
+                }
+                
+                document.getElementById(`p${i}-total`).innerText = formatter.format(costNum);
+                dataStore[`p${i}`] = { name: t, costNum: costNum, cost: formatter.format(costNum) };
+            });
 
-            // P3
-            const t3 = document.getElementById('p3-title').value;
-            const f3 = parseInt(document.getElementById('format3').value);
-            const h3_anchor = parseFloat(document.getElementById('p3-h1').value) + parseFloat(document.getElementById('p3-h2').value);
-            const h3_guest = parseFloat(document.getElementById('p3-h2').value) || 0;
-            
-            const p3AnchorPay = rate * h3_anchor;
-            const p3GuestPay = rate * h3_guest;
-            const p3TravelCost = f3 * travel; 
-            const p3Total = p3AnchorPay + ((f3 - 1) * p3GuestPay) + p3TravelCost + fee;
-            
-            document.getElementById('lbl-p3-g').innerText = `Invitados (x${h3_guest}h):`;
-            document.getElementById('lbl-p3-a').innerText = `Ancla (x${h3_anchor}h):`;
-            document.getElementById('p3-guest-pay').innerText = formatter.format(p3GuestPay);
-            document.getElementById('p3-anchor-pay').innerText = formatter.format(p3AnchorPay);
-            document.getElementById('p3-travel').innerText = formatter.format(p3TravelCost) + ` (${f3} viajes)`;
-            document.getElementById('p3-total').innerText = formatter.format(p3Total);
-
-            // P4
-            const t4 = document.getElementById('p4-title').value;
-            const f4 = parseInt(document.getElementById('format4').value);
-            const h4_solo = parseFloat(document.getElementById('p4-h1').value) || 0;
-            const h4_band = parseFloat(document.getElementById('p4-h2').value) || 0;
-            
-            const p4SoloPay = rate * h4_solo; 
-            const p4BandPay = rate * h4_band; 
-            const p4TotalMusicians = 1 + f4; 
-            const p4TravelCost = p4TotalMusicians * travel;
-            const p4Total = p4SoloPay + (f4 * p4BandPay) + p4TravelCost + fee;
-            
-            document.getElementById('lbl-p4-s').innerText = `Solista (x${h4_solo}h):`;
-            document.getElementById('lbl-p4-b').innerText = `Banda Cierre (x${h4_band}h):`;
-            document.getElementById('p4-solo-pay').innerText = formatter.format(p4SoloPay);
-            document.getElementById('p4-band-pay').innerText = formatter.format(p4BandPay) + ` (x${f4})`;
-            document.getElementById('p4-travel').innerText = formatter.format(p4TravelCost) + ` (${p4TotalMusicians} viajes)`;
-            document.getElementById('p4-total').innerText = formatter.format(p4Total);
-
-            // Actualizar dataStore
-            dataStore = {
-                p1: { name: t1, costNum: p1Total, cost: formatter.format(p1Total) },
-                p2: { name: t2, costNum: p2Total, cost: formatter.format(p2Total) },
-                p3: { name: t3, costNum: p3Total, cost: formatter.format(p3Total) },
-                p4: { name: t4, costNum: p4Total, cost: formatter.format(p4Total) }
-            };
-
-            window.calculateROI();
-            window.generateContract();
+            window.calculateROI(); window.generateContract();
         }
 
-        function showToast(msg) {
-            const toast = document.getElementById("toast");
-            toast.innerText = msg; toast.className = "show";
-            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        // --- SETLIST BUILDERS ---
+        window.addSetlist = () => {
+            const id = 'sl_' + Date.now();
+            const container = document.getElementById('setlists-container');
+            container.insertAdjacentHTML('beforeend', getSetlistHTML({id: id, title: `Show ${window.setlistCounter++}: Nuevo`, members: '', url: '', comments: '', etapas: []}));
+            window.triggerSave();
+        };
+
+        window.addEtapa = (slId) => {
+            const id = 'et_' + Date.now();
+            const container = document.getElementById(`etapas_${slId}`);
+            container.insertAdjacentHTML('beforeend', getEtapaHTML({id: id, time: `Etapa ${window.etapaCounter++}: 6:00 PM - 8:00 PM`, songs: []}));
+            window.triggerSave();
+        };
+
+        window.addSong = (etId) => {
+            const id = 'sg_' + Date.now();
+            const container = document.getElementById(`songs_${etId}`);
+            container.insertAdjacentHTML('beforeend', getSongHTML({id: id, name: '', artist: '', key: '', url: ''}));
+            window.triggerSave();
+        };
+
+        function getSetlistHTML(sl) {
+            let etHTML = ''; if(sl.etapas) sl.etapas.forEach(et => etHTML += getEtapaHTML(et));
+            return `
+            <div class="setlist-card fade-in" id="${sl.id}">
+                <div class="sl-header">
+                    <input type="text" class="sl-title editable-title" style="margin:0; flex:1; min-width:200px;" value="${sl.title || ''}" placeholder="Nombre del Show" oninput="window.triggerSave()">
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn-whatsapp" style="padding: 6px 12px; font-size: 0.85rem; width:auto; border-radius:6px;" onclick="window.copySetlist('${sl.id}')">📱 Enviar WA</button>
+                        <button class="btn-image" style="padding: 6px 12px; font-size: 0.85rem; width:auto; border-radius:6px;" onclick="window.downloadSetlistImage('${sl.id}')">📸 IMG / PDF</button>
+                        <button class="btn-danger" style="padding: 6px 12px;" onclick="window.removeElementById('${sl.id}')">✖ Borrar Ficha</button>
+                    </div>
+                </div>
+                
+                <div class="sl-inputs-row">
+                    <input type="text" class="sl-members" value="${sl.members || ''}" placeholder="👥 Integrantes asignados (ej. Rolando, Sofía...)" oninput="window.triggerSave()">
+                    <div class="url-wrapper">
+                        <input type="text" class="sl-url" value="${sl.url || ''}" placeholder="🔗 URL G-Drive (Carpeta del Show)" oninput="window.triggerSave()">
+                        <button class="btn-link" onclick="window.openLink(this.previousElementSibling.value)">Ir</button>
+                    </div>
+                </div>
+
+                <textarea class="sl-comments" placeholder="📝 Comentarios generales del show (ej. Código de vestimenta, observaciones, etc.)..." oninput="window.triggerSave()">${sl.comments || ''}</textarea>
+                
+                <div class="etapas-container" id="etapas_${sl.id}">${etHTML}</div>
+                <button class="btn-add" style="margin-top:10px; width:auto; padding:8px 15px;" onclick="window.addEtapa('${sl.id}')">+ Añadir Etapa Horaria</button>
+            </div>`;
         }
 
-        function createMusicianTag(id, text) {
+        function getEtapaHTML(et) {
+            let sgHTML = ''; if(et.songs) et.songs.forEach(sg => sgHTML += getSongHTML(sg));
+            return `
+            <div class="etapa-box fade-in" id="${et.id}">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+                    <input type="text" class="et-time" value="${et.time}" placeholder="Rango de hora" oninput="window.triggerSave()">
+                    <button class="btn-danger" onclick="window.removeElementById('${et.id}')">✖ Etapa</button>
+                </div>
+                <div class="songs-container" id="songs_${et.id}">${sgHTML}</div>
+                <button class="btn-add" style="padding: 5px 10px; font-size: 0.85rem; width:100%; border-style:dashed;" onclick="window.addSong('${et.id}')">+ Añadir Canción</button>
+            </div>`;
+        }
+
+        function getSongHTML(sg) {
+            return `
+            <div class="song-row fade-in" id="${sg.id}">
+                <input type="text" class="sg-name" value="${sg.name || ''}" placeholder="🎵 Canción" oninput="window.triggerSave()">
+                <input type="text" class="sg-artist" value="${sg.artist || ''}" placeholder="👤 Artista" oninput="window.triggerSave()">
+                <input type="text" class="sg-key" value="${sg.key || ''}" placeholder="🎹 Tono" oninput="window.triggerSave()">
+                <input type="text" class="sg-url" value="${sg.url || ''}" placeholder="🔗 URL Pista Directa" oninput="window.triggerSave()">
+                <button class="btn-link" style="padding: 8px;" title="Abrir URL" onclick="window.openLink(this.previousElementSibling.value)">Ir</button>
+                <button class="btn-danger" style="padding: 8px;" title="Borrar Canción" onclick="window.removeElementById('${sg.id}')">✖</button>
+            </div>`;
+        }
+
+        window.copySetlist = (id) => {
+            const card = document.getElementById(id);
+            const title = card.querySelector('.sl-title').value || 'Show sin nombre';
+            const members = card.querySelector('.sl-members').value || 'Por asignar';
+            const url = card.querySelector('.sl-url').value || 'No hay link';
+            const comments = card.querySelector('.sl-comments').value || 'Ninguno';
+            
+            let text = `🎵 *${title}*\n👥 Integrantes: ${members}\n📁 Carpeta Pistas: ${url}\n📝 Notas: ${comments}\n\n`;
+            
+            const etapas = card.querySelectorAll('.etapa-box');
+            etapas.forEach(et => {
+                text += `⏱️ *${et.querySelector('.et-time').value || 'Etapa'}*\n`;
+                const songs = et.querySelectorAll('.song-row');
+                songs.forEach(sg => {
+                    const name = sg.querySelector('.sg-name').value || 'Canción';
+                    const artist = sg.querySelector('.sg-artist').value || 'Artista';
+                    const key = sg.querySelector('.sg-key').value || '-';
+                    const sUrl = sg.querySelector('.sg-url').value;
+                    text += `- ${name} (${artist}) | Tono: ${key}`;
+                    if(sUrl) text += ` | 🔗 ${sUrl}`;
+                    text += `\n`;
+                });
+                text += `\n`;
+            });
+            
+            const el = document.createElement('textarea');
+            el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            showToast("✅ Setlist copiado para WhatsApp");
+        };
+
+        window.downloadSetlistImage = (id) => {
+            // Asegurarse de que estamos en la pestaña correcta para que html2canvas pueda tomar la foto
+            window.switchTab('tab-setlist'); 
+            const card = document.getElementById(id);
+            showToast("📸 Generando imagen del Setlist...");
+            html2canvas(card, { backgroundColor: '#1e1e1e', scale: 2 }).then(canvas => {
+                const link = document.createElement('a'); 
+                link.download = `Setlist_Dolce_${id}.png`; 
+                link.href = canvas.toDataURL('image/png'); 
+                link.click(); 
+                showToast("✅ Imagen del setlist descargada.");
+            });
+        };
+
+        // --- SHOWS DRAG & DROP ---
+        window.addShowZone = () => {
+            const id = 'show_' + Date.now();
+            const container = document.getElementById('shows-container');
+            container.insertAdjacentHTML('beforeend', getShowHTML({id: id, title: `✨ Escenario ${window.showCounter++}`, gear: '', musicians: []}));
+            window.triggerSave();
+        };
+
+        function getShowHTML(show) {
+            return `
+            <div class="drop-zone show-zone fade-in" id="${show.id}" ondrop="window.drop(event)" ondragover="window.allowDrop(event)" ondragenter="window.dragEnter(event)" ondragleave="window.dragLeave(event)">
+                <div class="show-header">
+                    <input type="text" class="show-title-input" value="${show.title}" oninput="window.triggerSave()">
+                    <button class="btn-danger" onclick="window.removeElementById('${show.id}')">✖</button>
+                </div>
+                <!-- Tags added dynamically here by applyState or UI -->
+                <textarea class="gear-input" placeholder="Asignación de Inventario/Equipo (ej. Rolando: Consola y Bocina. Carlos: Cajón...)" oninput="window.triggerSave()">${show.gear || ''}</textarea>
+            </div>`;
+        }
+
+        window.addMusician = () => {
+            const name = document.getElementById('musicianName').value.trim();
+            const inst = document.getElementById('musicianInst').value.trim();
+            if(!name) { alert("Escribe un nombre."); return; }
+            const id = 'custom_m' + Date.now();
+            const text = inst ? `${name} (${inst})` : name;
+            document.getElementById('roster-zone').appendChild(createTagElement(id, text));
+            document.getElementById('musicianName').value = ''; document.getElementById('musicianInst').value = '';
+            window.triggerSave();
+        };
+
+        function createTagElement(id, text) {
             const div = document.createElement('div');
             div.className = 'musician-tag fade-in'; div.draggable = true; div.id = id; div.ondragstart = window.drag;
-            div.innerHTML = `${text}<span class="delete-btn" onclick="window.removeTag(this)">×</span>`;
+            div.innerHTML = `${text}<span class="delete-btn" onclick="this.parentNode.remove(); window.triggerSave();">×</span>`;
             return div;
         }
 
-        // --- DRAG & DROP LOGIC ---
-        window.allowDrop = (ev) => { ev.preventDefault(); }
-        window.dragEnter = (ev) => { 
-            let t = ev.target; while(t && !t.classList.contains('drop-zone')) t = t.parentElement;
-            if(t) t.classList.add('dragover'); 
-        }
-        window.dragLeave = (ev) => { 
-            let t = ev.target; while(t && !t.classList.contains('drop-zone')) t = t.parentElement;
-            if(t) t.classList.remove('dragover'); 
-        }
-        window.drag = (ev) => { 
-            ev.dataTransfer.setData("text", ev.target.id); 
-            ev.dataTransfer.setData("source", ev.target.parentElement.id); 
-        }
+        // D&D Handlers
+        window.allowDrop = (ev) => ev.preventDefault();
+        window.dragEnter = (ev) => { let t=ev.target; while(t && !t.classList.contains('drop-zone')) t=t.parentElement; if(t) t.classList.add('dragover'); }
+        window.dragLeave = (ev) => { let t=ev.target; while(t && !t.classList.contains('drop-zone')) t=t.parentElement; if(t) t.classList.remove('dragover'); }
+        window.drag = (ev) => { ev.dataTransfer.setData("text", ev.target.id); ev.dataTransfer.setData("source", ev.target.parentElement.id); }
         window.drop = (ev) => {
-            ev.preventDefault();
-            let data = ev.dataTransfer.getData("text");
-            let sourceId = ev.dataTransfer.getData("source");
-            let target = ev.target;
-            
-            while(target && !target.classList.contains('drop-zone') && target !== document.body) { target = target.parentElement; }
-            
+            ev.preventDefault(); let data = ev.dataTransfer.getData("text"); let sourceId = ev.dataTransfer.getData("source");
+            let target = ev.target; while(target && !target.classList.contains('drop-zone') && target !== document.body) target = target.parentElement;
             if(target && target.classList.contains('drop-zone')) {
-                target.classList.remove('dragover');
-                const elementToMove = document.getElementById(data);
-                
+                target.classList.remove('dragover'); const elementToMove = document.getElementById(data);
                 if(sourceId === 'roster-zone' && target.id !== 'roster-zone') {
-                    const clone = elementToMove.cloneNode(true);
-                    clone.id = data + '_clone_' + cloneCounter++;
-                    clone.ondragstart = window.drag; 
-                    target.appendChild(clone);
+                    const clone = elementToMove.cloneNode(true); clone.id = data + '_c_' + cloneCounter++; clone.ondragstart = window.drag; 
+                    target.insertBefore(clone, target.querySelector('.gear-input')); // Insert before textarea
                 } 
                 else if (sourceId !== 'roster-zone' && target.id === 'roster-zone') { elementToMove.remove(); }
-                else if (sourceId !== 'roster-zone' && target.id !== 'roster-zone') { target.appendChild(elementToMove); }
-                
+                else if (sourceId !== 'roster-zone' && target.id !== 'roster-zone') { target.insertBefore(elementToMove, target.querySelector('.gear-input')); }
                 window.triggerSave();
             }
         }
 
-        // --- FIREBASE SYNC LOGIC ---
-
+        // --- FIREBASE SYNC ---
         function gatherState() {
             return {
-                inputs: {
-                    rate: document.getElementById('rate').value,
-                    travel: document.getElementById('travel').value,
-                    fee: document.getElementById('fee').value
+                logistics: {
+                    dress: document.getElementById('logistics-dress').value,
+                    time: document.getElementById('logistics-time').value,
+                    loc: document.getElementById('logistics-loc').value,
+                    addr: document.getElementById('logistics-addr').value
                 },
+                inputs: { rate: document.getElementById('rate').value, travel: document.getElementById('travel').value, fee: document.getElementById('fee').value },
                 proposals: {
                     p1: { title: document.getElementById('p1-title').value, h1: document.getElementById('p1-h1').value, h2: document.getElementById('p1-h2').value, format: document.getElementById('format1').value },
                     p2: { title: document.getElementById('p2-title').value, h: document.getElementById('p2-h').value, format: document.getElementById('format2').value },
                     p3: { title: document.getElementById('p3-title').value, h1: document.getElementById('p3-h1').value, h2: document.getElementById('p3-h2').value, format: document.getElementById('format3').value },
                     p4: { title: document.getElementById('p4-title').value, h1: document.getElementById('p4-h1').value, h2: document.getElementById('p4-h2').value, format: document.getElementById('format4').value }
                 },
-                roster: Array.from(document.getElementById('roster-zone').querySelectorAll('.musician-tag')).map(el => ({
-                    id: el.id,
-                    text: el.childNodes[0].nodeValue.trim()
+                roster: Array.from(document.getElementById('roster-zone').querySelectorAll('.musician-tag')).map(el => ({ id: el.id, text: el.childNodes[0].nodeValue.trim() })),
+                shows: Array.from(document.querySelectorAll('.shows-panel .show-zone')).map(zone => ({
+                    id: zone.id, title: zone.querySelector('.show-title-input').value, gear: zone.querySelector('.gear-input').value || '',
+                    musicians: Array.from(zone.querySelectorAll('.musician-tag')).map(el => ({ id: el.id, text: el.childNodes[0].nodeValue.trim() }))
                 })),
-                shows: Array.from(document.querySelectorAll('.shows-panel .show-zone')).map(zone => {
-                    return {
-                        id: zone.id,
-                        title: zone.querySelector('.show-title-input').value,
-                        musicians: Array.from(zone.querySelectorAll('.musician-tag')).map(el => ({
-                            id: el.id,
-                            text: el.childNodes[0].nodeValue.trim()
+                setlists: Array.from(document.querySelectorAll('.setlist-card')).map(card => ({
+                    id: card.id, title: card.querySelector('.sl-title').value, members: card.querySelector('.sl-members').value, url: card.querySelector('.sl-url').value, comments: card.querySelector('.sl-comments').value,
+                    etapas: Array.from(card.querySelectorAll('.etapa-box')).map(et => ({
+                        id: et.id, time: et.querySelector('.et-time').value,
+                        songs: Array.from(et.querySelectorAll('.song-row')).map(sg => ({
+                            id: sg.id, name: sg.querySelector('.sg-name').value, artist: sg.querySelector('.sg-artist').value, key: sg.querySelector('.sg-key').value, url: sg.querySelector('.sg-url').value
                         }))
-                    };
-                }),
-                tools: {
-                    ticketAvg: document.getElementById('ticketAvg').value
-                }
+                    }))
+                })),
+                tools: { ticketAvg: document.getElementById('ticketAvg').value }
             };
         }
 
         function applyState(state) {
-            isApplyingState = true; // Pausar triggerSave
+            isApplyingState = true;
+            const safeUpdate = (id, val) => { const el = document.getElementById(id); if (el && document.activeElement !== el && el.value !== String(val)) el.value = val; };
 
-            const safeUpdate = (id, val) => {
-                const el = document.getElementById(id);
-                if (el && document.activeElement !== el && el.value !== String(val)) {
-                    el.value = val;
-                }
-            };
-
-            // Restaurar Inputs
-            if (state.inputs) {
-                safeUpdate('rate', state.inputs.rate);
-                safeUpdate('travel', state.inputs.travel);
-                safeUpdate('fee', state.inputs.fee);
+            if(state.logistics) {
+                safeUpdate('logistics-dress', state.logistics.dress); safeUpdate('logistics-time', state.logistics.time);
+                safeUpdate('logistics-loc', state.logistics.loc); safeUpdate('logistics-addr', state.logistics.addr);
             }
-
-            // Restaurar Propuestas
+            if (state.inputs) { safeUpdate('rate', state.inputs.rate); safeUpdate('travel', state.inputs.travel); safeUpdate('fee', state.inputs.fee); }
             if (state.proposals) {
-                safeUpdate('p1-title', state.proposals.p1.title); safeUpdate('p1-h1', state.proposals.p1.h1); safeUpdate('p1-h2', state.proposals.p1.h2); safeUpdate('format1', state.proposals.p1.format);
-                safeUpdate('p2-title', state.proposals.p2.title); safeUpdate('p2-h', state.proposals.p2.h); safeUpdate('format2', state.proposals.p2.format);
-                safeUpdate('p3-title', state.proposals.p3.title); safeUpdate('p3-h1', state.proposals.p3.h1); safeUpdate('p3-h2', state.proposals.p3.h2); safeUpdate('format3', state.proposals.p3.format);
-                safeUpdate('p4-title', state.proposals.p4.title); safeUpdate('p4-h1', state.proposals.p4.h1); safeUpdate('p4-h2', state.proposals.p4.h2); safeUpdate('format4', state.proposals.p4.format);
+                ['p1','p2','p3','p4'].forEach(p => safeUpdate(`${p}-title`, state.proposals[p].title));
+                safeUpdate('p1-h1', state.proposals.p1.h1); safeUpdate('p1-h2', state.proposals.p1.h2); safeUpdate('format1', state.proposals.p1.format);
+                safeUpdate('p2-h', state.proposals.p2.h); safeUpdate('format2', state.proposals.p2.format);
+                safeUpdate('p3-h1', state.proposals.p3.h1); safeUpdate('p3-h2', state.proposals.p3.h2); safeUpdate('format3', state.proposals.p3.format);
+                safeUpdate('p4-h1', state.proposals.p4.h1); safeUpdate('p4-h2', state.proposals.p4.h2); safeUpdate('format4', state.proposals.p4.format);
             }
+            if (state.tools) safeUpdate('ticketAvg', state.tools.ticketAvg);
 
-            if (state.tools) {
-                safeUpdate('ticketAvg', state.tools.ticketAvg);
-            }
-
-            // Restaurar Roster y Shows SOLO si no hay nada enfocado que pueda romperse
-            const activeType = document.activeElement ? document.activeElement.type : '';
-            if (activeType !== 'text') {
-                
-                const rosterZone = document.getElementById('roster-zone');
-                Array.from(rosterZone.querySelectorAll('.musician-tag')).forEach(el => el.remove());
-                
-                if (state.roster && state.roster.length > 0) {
-                    state.roster.forEach(m => rosterZone.appendChild(createMusicianTag(m.id, m.text)));
-                } else if (!state.roster) {
-                    // Carga inicial por defecto si está vacío
-                    const defaults = [
-                        {id: 'm1', text: 'Rolando (Sax/Violín)'}, {id: 'm2', text: 'Sofía (Voz Inglés)'},
-                        {id: 'm3', text: 'Ana (Voz Español)'}, {id: 'm4', text: 'Carlos (Percusión)'},
-                        {id: 'm5', text: 'Luis (Bajo)'}, {id: 'm6', text: 'Elena (Cello)'}
-                    ];
-                    defaults.forEach(m => rosterZone.appendChild(createMusicianTag(m.id, m.text)));
+            const ae = document.activeElement;
+            const isTyping = ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable);
+            
+            if (!isTyping) {
+                // Roster
+                const rz = document.getElementById('roster-zone');
+                Array.from(rz.querySelectorAll('.musician-tag')).forEach(el => el.remove());
+                if (state.roster && state.roster.length > 0) state.roster.forEach(m => rz.appendChild(createTagElement(m.id, m.text)));
+                else if (!state.roster) { // Defaults
+                    [{id:'m1',t:'Rolando (Sax/Violín)'},{id:'m2',t:'Sofía (Voz Inglés)'},{id:'m3',t:'Ana (Voz Español)'},{id:'m4',t:'Carlos (Cajón)'},{id:'m5',t:'Luis (Bajo)'},{id:'m6',t:'Elena (Cello)'}].forEach(m=>rz.appendChild(createTagElement(m.id, m.t)));
                 }
 
-                const showsContainer = document.getElementById('shows-container');
-                showsContainer.innerHTML = '';
-                
+                // Shows
+                const sc = document.getElementById('shows-container');
+                sc.innerHTML = '';
                 if (state.shows && state.shows.length > 0) {
                     state.shows.forEach(show => {
-                        const div = document.createElement('div');
-                        div.className = 'drop-zone show-zone fade-in'; div.id = show.id;
-                        div.ondrop = window.drop; div.ondragover = window.allowDrop; div.ondragenter = window.dragEnter; div.ondragleave = window.dragLeave;
+                        sc.insertAdjacentHTML('beforeend', getShowHTML(show));
+                        const zone = document.getElementById(show.id);
+                        show.musicians.forEach(m => zone.insertBefore(createTagElement(m.id, m.text), zone.querySelector('.gear-input')));
+                    });
+                } else if (!state.shows) { // Defaults
+                    ['1️⃣ Pop & Soul', '2️⃣ Fiesta Latina', '3️⃣ Electro-Strings', '4️⃣ Leyendas del Rock'].forEach((t, i) => sc.insertAdjacentHTML('beforeend', getShowHTML({id: 'show_'+i, title: t, gear: '', musicians: []})));
+                }
 
-                        div.innerHTML = `
-                            <div class="show-header">
-                                <input type="text" class="show-title-input" value="${show.title}" oninput="window.triggerSave()">
-                                <button class="btn-danger" onclick="window.deleteZone('${show.id}')">✖</button>
-                            </div>
-                        `;
-                        
-                        show.musicians.forEach(m => div.appendChild(createMusicianTag(m.id, m.text)));
-                        showsContainer.appendChild(div);
-                    });
-                    window.showCounter = Math.max(window.showCounter, state.shows.length + 10);
-                } else if (!state.shows) {
-                    // Carga por defecto
-                    const defaultShows = ["1️⃣ Pop & Soul", "2️⃣ Fiesta Latina", "3️⃣ Electro-Strings", "4️⃣ Leyendas del Rock"];
-                    defaultShows.forEach((title, index) => {
-                        const newId = 'show' + (index + 1);
-                        const div = document.createElement('div');
-                        div.className = 'drop-zone show-zone fade-in'; div.id = newId;
-                        div.ondrop = window.drop; div.ondragover = window.allowDrop; div.ondragenter = window.dragEnter; div.ondragleave = window.dragLeave;
-                        div.innerHTML = `
-                            <div class="show-header">
-                                <input type="text" class="show-title-input" value="${title}" oninput="window.triggerSave()">
-                                <button class="btn-danger" onclick="window.deleteZone('${newId}')">✖</button>
-                            </div>`;
-                        showsContainer.appendChild(div);
-                    });
+                // Setlists
+                const slc = document.getElementById('setlists-container');
+                slc.innerHTML = '';
+                if(state.setlists && state.setlists.length > 0) {
+                    state.setlists.forEach(sl => slc.insertAdjacentHTML('beforeend', getSetlistHTML(sl)));
                 }
             }
 
@@ -788,62 +791,58 @@ Firma Dolce Ensamble: _____________________`;
 
         window.triggerSave = () => {
             if (isApplyingState) return;
-            
-            // Actualizar interfaz visual
-            const syncDot = document.getElementById('sync-dot');
-            const syncText = document.getElementById('sync-text');
-            syncDot.classList.remove('online');
-            syncText.innerText = "Guardando...";
-
+            const sd = document.getElementById('sync-dot'); const st = document.getElementById('sync-text');
+            sd.classList.remove('online'); st.innerText = "Guardando...";
             if (saveTimeout) clearTimeout(saveTimeout);
             saveTimeout = setTimeout(async () => {
                 const state = gatherState();
                 if(auth.currentUser) {
-                    try {
-                        await setDoc(docRef, state);
-                        syncDot.classList.add('online');
-                        syncText.innerText = "Sincronizado en línea";
-                    } catch (error) {
-                        console.error("Error al guardar:", error);
-                        syncText.innerText = "Error de sincronización";
-                    }
+                    try { await setDoc(docRef, state); sd.classList.add('online'); st.innerText = "Sincronizado en línea"; } 
+                    catch (error) { console.error("Error:", error); st.innerText = "Error de sincronización"; }
                 }
-            }, 800); // 800ms debounce
+            }, 800);
         };
 
-        // --- INICIALIZACIÓN DE FIREBASE ---
-        async function initApp() {
-            try {
-                await signInAnonymously(auth);
-            } catch (error) {
-                console.error("Error Auth:", error);
-                document.getElementById('sync-text').innerText = "Error de Conexión Auth";
-            }
-        }
+        // Utilidades Extra
+        window.calculateROI = () => {
+            if(!dataStore.p1) return;
+            const t = parseFloat(document.getElementById('ticketAvg').value)||1;
+            const sel = document.getElementById('roi-prop').value;
+            const el = document.getElementById('roi-result');
+            el.innerText = Math.ceil(dataStore['p'+sel].costNum / t);
+            el.style.transform = "scale(1.2)"; setTimeout(() => el.style.transform = "scale(1)", 200);
+        };
+        window.generateContract = () => {
+            if(!dataStore.p1) return;
+            const sel = document.getElementById('contract-prop').value; const prop = dataStore['p'+sel];
+            document.getElementById('contract-text').value = `ACUERDO DE PRESTACIÓN DE SERVICIOS MUSICALES\n--------------------------------------------\nFecha: ${new Date().toLocaleDateString('es-MX')}\nCliente: Restaurante Cornalina\nAgencia: Dolce Ensamble (Rolando)\n\n1. SERVICIO: El Proveedor (Dolce Ensamble) se compromete a proveer talento musical bajo el formato "${prop.name}".\n2. HORARIOS: Se respetará el estándar de 50 minutos de música por 10 minutos de descanso por cada hora contratada.\n3. INVERSIÓN: El Cliente se compromete a pagar la cantidad de ${prop.cost} MXN netos por evento pactado. Este monto incluye honorarios de músicos, traslados, equipo de audio premium y gestión directiva.\n4. AUDIO: El proveedor conectará su equipo propio asegurando la calidad acústica idónea para el lugar.\n\nFirma Cliente: _____________________\nFirma Dolce Ensamble: _____________________`;
+        };
+        window.copyContract = () => { const el = document.getElementById('contract-text'); el.select(); document.execCommand('copy'); showToast("📝 Contrato copiado."); };
+        window.copyToClipboard = () => {
+            const el = document.createElement('textarea');
+            el.value = `*Cotización Dolce Ensamble* 🎻\nTarifa Músico: $${document.getElementById('rate').value}/h | Traslado: $${document.getElementById('travel').value} | Audio/Gestión: $${document.getElementById('fee').value}\n\n*${dataStore.p1.name}:* ${dataStore.p1.cost}\n*${dataStore.p2.name}:* ${dataStore.p2.cost}\n*${dataStore.p3.name}:* ${dataStore.p3.cost}\n*${dataStore.p4.name}:* ${dataStore.p4.cost}\n`;
+            document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); showToast("📱 Precios copiados para WhatsApp!");
+        };
+        window.downloadImage = () => {
+            // Asegurarse de que estamos en la pestaña correcta para html2canvas
+            window.switchTab('tab-finanzas');
+            const sel = document.getElementById('download-select').value;
+            showToast("📸 Capturando imagen...");
+            html2canvas(document.getElementById(sel === 'export-area' ? 'export-area' : sel), { backgroundColor: '#121212', scale: 2 }).then(canvas => {
+                const link = document.createElement('a'); link.download = sel === 'export-area' ? 'Propuestas.png' : `Propuesta_${sel}.png`; link.href = canvas.toDataURL('image/png'); link.click(); showToast("✅ Imagen guardada.");
+            });
+        };
 
-        initApp();
-
+        // Init
+        signInAnonymously(auth).catch(e => console.error("Error Auth:", e));
         onAuthStateChanged(auth, (user) => {
             if (!user) return;
-            
             onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    if (!isApplyingState) {
-                        applyState(docSnap.data());
-                        document.getElementById('sync-dot').classList.add('online');
-                        document.getElementById('sync-text').innerText = "Sincronizado en línea";
-                    }
-                } else {
-                    // Documento no existe aún, guardar el estado inicial (valores por defecto)
-                    window.triggerSave();
-                }
-            }, (error) => {
-                console.error("Firestore error:", error);
-                document.getElementById('sync-text').innerText = "Sin conexión";
-                document.getElementById('sync-dot').classList.remove('online');
-            });
+                if (docSnap.exists() && !isApplyingState) {
+                    applyState(docSnap.data()); document.getElementById('sync-dot').classList.add('online'); document.getElementById('sync-text').innerText = "Sincronizado en línea";
+                } else if (!docSnap.exists()) window.triggerSave();
+            }, (error) => { document.getElementById('sync-text').innerText = "Sin conexión"; document.getElementById('sync-dot').classList.remove('online'); });
         });
-
     </script>
 </body>
 </html>
