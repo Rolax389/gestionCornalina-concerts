@@ -15,6 +15,7 @@
             --text-light: #f5f5f5;
             --text-muted: #a0a0a0;
             --accent: #ff4444;
+            --success: #25D366;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -31,9 +32,13 @@
         .fade-in { animation: fadeIn 0.6s ease-out forwards; }
         .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; }
 
-        header { text-align: center; margin-bottom: 30px; animation: fadeIn 0.8s ease-out; }
+        header { text-align: center; margin-bottom: 30px; animation: fadeIn 0.8s ease-out; position: relative; }
         h1 { color: var(--primary); font-size: 2.5rem; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         h2 { color: var(--text-muted); font-size: 1.1rem; font-weight: 400; }
+        .sync-status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 20px; margin-top: 10px;}
+        .sync-dot { width: 8px; height: 8px; background-color: #555; border-radius: 50%; transition: 0.3s; }
+        .sync-dot.online { background-color: var(--success); box-shadow: 0 0 8px var(--success); }
+
         h3.section-title { color: var(--primary); text-align: center; margin: 50px 0 25px 0; border-bottom: 1px solid #333; padding-bottom: 10px; font-size: 1.8rem; }
 
         /* --- CONTROLES SUPERIORES --- */
@@ -100,7 +105,7 @@
             border-radius: 8px; cursor: pointer; text-align: center; border: none; transition: 0.3s;
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-whatsapp { background-color: #25D366; color: #fff; } .btn-whatsapp:hover { background-color: #1ebe57; transform: scale(1.02); }
+        .btn-whatsapp { background-color: var(--success); color: #fff; } .btn-whatsapp:hover { background-color: #1ebe57; transform: scale(1.02); }
         .btn-image { background-color: var(--primary); color: #000; } .btn-image:hover { background-color: var(--primary-hover); transform: scale(1.02); }
         .btn-add { background-color: #333; color: var(--primary); border: 1px solid var(--primary); padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: bold;}
         .btn-add:hover { background-color: var(--primary); color: #000; }
@@ -161,6 +166,10 @@
     <header>
         <h1>Dolce Ensamble 🎻🎷</h1>
         <h2>Cotizador y Suite de Planeación - Cornalina</h2>
+        <div class="sync-status">
+            <div id="sync-dot" class="sync-dot"></div>
+            <span id="sync-text">Conectando a Firebase...</span>
+        </div>
     </header>
 
     <div class="controls-panel fade-in">
@@ -168,21 +177,21 @@
             <label>Tarifa Hora/Músico 💵</label>
             <div class="input-wrapper">
                 <span>$</span>
-                <input type="number" id="rate" value="400" step="50" oninput="calculateAll()">
+                <input type="number" id="rate" value="400" step="50" oninput="window.handleInput()">
             </div>
         </div>
         <div class="input-group">
             <label>Traslado/Músico 🚗</label>
             <div class="input-wrapper">
                 <span>$</span>
-                <input type="number" id="travel" value="150" step="50" oninput="calculateAll()">
+                <input type="number" id="travel" value="150" step="50" oninput="window.handleInput()">
             </div>
         </div>
         <div class="input-group">
             <label>Audio & Gestión 🎛️</label>
             <div class="input-wrapper">
                 <span>$</span>
-                <input type="number" id="fee" value="500" step="100" oninput="calculateAll()">
+                <input type="number" id="fee" value="500" step="100" oninput="window.handleInput()">
             </div>
         </div>
     </div>
@@ -193,12 +202,12 @@
             
             <!-- P1 -->
             <div class="card fade-in delay-1" id="card1">
-                <input type="text" class="editable-title" id="p1-title" value="1. Doble Turno Premium 🌟" oninput="calculateAll()">
+                <input type="text" class="editable-title" id="p1-title" value="1. Doble Turno Premium 🌟" oninput="window.handleInput()">
                 <div class="card-badge">
-                    ⏱️ <input type="number" class="editable-hour" id="p1-h1" value="3" oninput="calculateAll()">h + 
-                    <input type="number" class="editable-hour" id="p1-h2" value="3" oninput="calculateAll()">h
+                    ⏱️ <input type="number" class="editable-hour" id="p1-h1" value="3" oninput="window.handleInput()">h + 
+                    <input type="number" class="editable-hour" id="p1-h2" value="3" oninput="window.handleInput()">h
                 </div>
-                <select id="format1" class="card-select" onchange="calculateAll()">
+                <select id="format1" class="card-select" onchange="window.handleInput()">
                     <option value="2">Dueto (2 pax x turno)</option>
                     <option value="3" selected>Trío (3 pax x turno)</option>
                 </select>
@@ -212,11 +221,11 @@
 
             <!-- P2 -->
             <div class="card fade-in delay-2" id="card2">
-                <input type="text" class="editable-title" id="p2-title" value="2. Formato Continuo ♾️" oninput="calculateAll()">
+                <input type="text" class="editable-title" id="p2-title" value="2. Formato Continuo ♾️" oninput="window.handleInput()">
                 <div class="card-badge">
-                    ⏱️ <input type="number" class="editable-hour" id="p2-h" value="6" oninput="calculateAll()"> hrs continuas
+                    ⏱️ <input type="number" class="editable-hour" id="p2-h" value="6" oninput="window.handleInput()"> hrs continuas
                 </div>
-                <select id="format2" class="card-select" onchange="calculateAll()">
+                <select id="format2" class="card-select" onchange="window.handleInput()">
                     <option value="2">Dueto (2 pax total)</option>
                     <option value="3" selected>Trío (3 pax total)</option>
                 </select>
@@ -230,12 +239,12 @@
 
             <!-- P3 -->
             <div class="card fade-in delay-3" id="card3">
-                <input type="text" class="editable-title" id="p3-title" value="3. Modelo Escalable 📈" oninput="calculateAll()">
+                <input type="text" class="editable-title" id="p3-title" value="3. Modelo Escalable 📈" oninput="window.handleInput()">
                 <div class="card-badge">
-                    ⏱️ <input type="number" class="editable-hour" id="p3-h1" value="2" oninput="calculateAll()">h Solista + 
-                    <input type="number" class="editable-hour" id="p3-h2" value="4" oninput="calculateAll()">h Ensamble
+                    ⏱️ <input type="number" class="editable-hour" id="p3-h1" value="2" oninput="window.handleInput()">h Solista + 
+                    <input type="number" class="editable-hour" id="p3-h2" value="4" oninput="window.handleInput()">h Ensamble
                 </div>
-                <select id="format3" class="card-select" onchange="calculateAll()">
+                <select id="format3" class="card-select" onchange="window.handleInput()">
                     <option value="2">Dueto Final (1 Ancla + 1 Inv)</option>
                     <option value="3" selected>Trío Final (1 Ancla + 2 Inv)</option>
                 </select>
@@ -249,12 +258,12 @@
 
             <!-- P4 -->
             <div class="card fade-in delay-3" id="card4">
-                <input type="text" class="editable-title" id="p4-title" value="4. Relevo Total 🔄" oninput="calculateAll()">
+                <input type="text" class="editable-title" id="p4-title" value="4. Relevo Total 🔄" oninput="window.handleInput()">
                 <div class="card-badge">
-                    ⏱️ <input type="number" class="editable-hour" id="p4-h1" value="2" oninput="calculateAll()">h Solista ➔ 
-                    <input type="number" class="editable-hour" id="p4-h2" value="4" oninput="calculateAll()">h Banda
+                    ⏱️ <input type="number" class="editable-hour" id="p4-h1" value="2" oninput="window.handleInput()">h Solista ➔ 
+                    <input type="number" class="editable-hour" id="p4-h2" value="4" oninput="window.handleInput()">h Banda
                 </div>
-                <select id="format4" class="card-select" onchange="calculateAll()">
+                <select id="format4" class="card-select" onchange="window.handleInput()">
                     <option value="2">Banda Cierre: Dueto</option>
                     <option value="3" selected>Banda Cierre: Trío</option>
                 </select>
@@ -270,7 +279,7 @@
     </div> <!-- Fin área exportable -->
 
     <div class="btn-group fade-in">
-        <button class="btn btn-whatsapp" onclick="copyToClipboard()">📱 Copiar Texto (WhatsApp)</button>
+        <button class="btn btn-whatsapp" onclick="window.copyToClipboard()">📱 Copiar Texto (WhatsApp)</button>
         <div class="download-controls">
             <select id="download-select" class="download-select">
                 <option value="export-area">📸 Todas las Propuestas</option>
@@ -279,7 +288,7 @@
                 <option value="card3">📸 Solo Propuesta 3</option>
                 <option value="card4">📸 Solo Propuesta 4</option>
             </select>
-            <button class="btn btn-image" onclick="downloadImage()" style="flex: 1;">Descargar</button>
+            <button class="btn btn-image" onclick="window.downloadImage()" style="flex: 1;">Descargar</button>
         </div>
     </div>
 
@@ -292,19 +301,13 @@
             <h4 style="color:var(--primary); margin-bottom:15px; border-bottom:1px solid #444; padding-bottom:10px;">🎶 Tu Roster / Músicos</h4>
             <input type="text" id="musicianName" placeholder="Nombre (ej. Rolando)">
             <input type="text" id="musicianInst" placeholder="Instrumento (ej. Saxofón)">
-            <button class="btn btn-add" onclick="addMusician()" style="width:100%; padding:10px; margin-bottom: 20px;">+ Añadir Músico</button>
+            <button class="btn btn-add" onclick="window.addMusician()" style="width:100%; padding:10px; margin-bottom: 20px;">+ Añadir Músico</button>
             
-            <div class="drop-zone" id="roster-zone" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+            <div class="drop-zone" id="roster-zone" ondrop="window.drop(event)" ondragover="window.allowDrop(event)" ondragenter="window.dragEnter(event)" ondragleave="window.dragLeave(event)">
                 <div style="text-align:center; color:#777; font-size:0.85rem; margin-bottom:5px;">
                     Arrastra músicos hacia los shows.<br>(Se crearán copias automáticamente)
                 </div>
-                <!-- Pre-cargados -->
-                <div class="musician-tag" draggable="true" ondragstart="drag(event)" id="m1">Rolando (Sax/Violín)<span class="delete-btn" onclick="this.parentNode.remove()">×</span></div>
-                <div class="musician-tag" draggable="true" ondragstart="drag(event)" id="m2">Sofía (Voz Inglés)<span class="delete-btn" onclick="this.parentNode.remove()">×</span></div>
-                <div class="musician-tag" draggable="true" ondragstart="drag(event)" id="m3">Ana (Voz Español)<span class="delete-btn" onclick="this.parentNode.remove()">×</span></div>
-                <div class="musician-tag" draggable="true" ondragstart="drag(event)" id="m4">Carlos (Percusión)<span class="delete-btn" onclick="this.parentNode.remove()">×</span></div>
-                <div class="musician-tag" draggable="true" ondragstart="drag(event)" id="m5">Luis (Bajo)<span class="delete-btn" onclick="this.parentNode.remove()">×</span></div>
-                <div class="musician-tag" draggable="true" ondragstart="drag(event)" id="m6">Elena (Cello)<span class="delete-btn" onclick="this.parentNode.remove()">×</span></div>
+                <!-- Los precargados se insertarán dinámicamente si no hay estado en la BD -->
             </div>
         </div>
 
@@ -312,41 +315,17 @@
         <div style="flex: 3; display: flex; flex-direction: column; gap: 15px;">
             <div style="display:flex; justify-content: space-between; align-items: center;">
                 <h4 style="color:var(--primary);">Escenarios / Viernes</h4>
-                <button class="btn-danger" onclick="addShowZone()" style="border-color: var(--primary); color: var(--primary);">+ Añadir Nuevo Show</button>
+                <button class="btn-danger" onclick="window.addShowZone()" style="border-color: var(--primary); color: var(--primary);">+ Añadir Nuevo Show</button>
             </div>
             
             <div class="shows-panel" id="shows-container">
-                <!-- Zonas base editables -->
-                <div class="drop-zone show-zone" id="show1" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
-                    <div class="show-header">
-                        <input type="text" class="show-title-input" value="1️⃣ Pop & Soul">
-                        <button class="btn-danger" onclick="deleteZone('show1')">✖</button>
-                    </div>
-                </div>
-                <div class="drop-zone show-zone" id="show2" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
-                    <div class="show-header">
-                        <input type="text" class="show-title-input" value="2️⃣ Fiesta Latina">
-                        <button class="btn-danger" onclick="deleteZone('show2')">✖</button>
-                    </div>
-                </div>
-                <div class="drop-zone show-zone" id="show3" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
-                    <div class="show-header">
-                        <input type="text" class="show-title-input" value="3️⃣ Electro-Strings">
-                        <button class="btn-danger" onclick="deleteZone('show3')">✖</button>
-                    </div>
-                </div>
-                <div class="drop-zone show-zone" id="show4" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
-                    <div class="show-header">
-                        <input type="text" class="show-title-input" value="4️⃣ Leyendas del Rock">
-                        <button class="btn-danger" onclick="deleteZone('show4')">✖</button>
-                    </div>
-                </div>
+                <!-- Se poblarán dinámicamente desde Firebase -->
             </div>
         </div>
 
     </div>
 
-    <!-- SECCIÓN DE HERRAMIENTAS ADICIONALES (Reubicada) -->
+    <!-- SECCIÓN DE HERRAMIENTAS ADICIONALES -->
     <h3 class="section-title fade-in" style="margin-top:60px;">🛠️ Herramientas para el Negocio</h3>
     <div class="tools-container fade-in">
         
@@ -355,9 +334,9 @@
             <h3 class="tool-title">📈 Rentabilidad por Mesa</h3>
             <p style="font-size:0.85rem; color:#aaa; margin-bottom:10px;">Calcula cuánto debe vender el restaurante para cubrir la música.</p>
             <label style="color:var(--primary); font-size:0.9rem;">Ticket Promedio por Persona ($)</label>
-            <input type="number" id="ticketAvg" value="500" step="50" oninput="calculateROI()" style="width:100%; padding:10px; border-radius:6px; background:#2a2a2a; border:1px solid #444; color:#fff; margin-bottom:15px;">
+            <input type="number" id="ticketAvg" value="500" step="50" oninput="window.calculateROI()" style="width:100%; padding:10px; border-radius:6px; background:#2a2a2a; border:1px solid #444; color:#fff; margin-bottom:15px;">
             <label style="color:var(--primary); font-size:0.9rem;">Analizar Propuesta:</label>
-            <select id="roi-prop" class="card-select" onchange="calculateROI()">
+            <select id="roi-prop" class="card-select" onchange="window.calculateROI()">
                 <option value="1">Propuesta 1</option>
                 <option value="2">Propuesta 2</option>
                 <option value="3" selected>Propuesta 3</option>
@@ -374,27 +353,176 @@
         <div class="tool-card">
             <h3 class="tool-title">📝 Creador de Acuerdos</h3>
             <p style="font-size:0.85rem; color:#aaa; margin-bottom:10px;">Genera un texto formal para confirmar el trato.</p>
-            <select id="contract-prop" class="card-select" onchange="generateContract()">
+            <select id="contract-prop" class="card-select" onchange="window.generateContract()">
                 <option value="1">Acuerdo Propuesta 1</option>
                 <option value="2">Acuerdo Propuesta 2</option>
                 <option value="3" selected>Acuerdo Propuesta 3</option>
                 <option value="4">Acuerdo Propuesta 4</option>
             </select>
             <textarea id="contract-text" class="contract-area" readonly></textarea>
-            <button class="btn btn-add" style="width:100%;" onclick="copyContract()">📋 Copiar Acuerdo</button>
+            <button class="btn btn-add" style="width:100%;" onclick="window.copyContract()">📋 Copiar Acuerdo</button>
         </div>
 
     </div>
 
     <div id="toast">Notificación</div>
 
-    <script>
-        const formatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 });
-        let data = {};
-        let showCounter = 5; // Para nuevos shows añadidos dinámicamente
+    <!-- CÓDIGO FUNCIONAL CON FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- CÁLCULOS DINÁMICOS ---
-        function calculateAll() {
+        // Configuración de Firebase del usuario
+        const firebaseConfig = {
+            apiKey: "AIzaSyDTaHdorgZ1PfOBqNOme069JsBfkaL6qnM",
+            authDomain: "gestioncornalina-concerts.firebaseapp.com",
+            projectId: "gestioncornalina-concerts",
+            storageBucket: "gestioncornalina-concerts.firebasestorage.app",
+            messagingSenderId: "526772028347",
+            appId: "1:526772028347:web:2e1b630318a4d5d8a27a9e",
+            measurementId: "G-67TKNN7R7P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Referencia estricta para persistencia
+        const appIdString = "gestioncornalina";
+        const docRef = doc(db, 'artifacts', appIdString, 'public', 'data', 'appState', 'currentState');
+
+        // Variables Globales
+        const formatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        let dataStore = {};
+        window.showCounter = 5;
+        let cloneCounter = 0;
+
+        let isApplyingState = false; // Bandera para evitar bucle infinito de guardado
+        let saveTimeout = null;
+
+        // --- FUNCIONES EXPUESTAS A WINDOW (Para el HTML) ---
+        
+        window.handleInput = () => {
+            calculateMath();
+            window.triggerSave();
+        };
+
+        window.calculateROI = () => {
+            if(!dataStore.p1) return;
+            const ticket = parseFloat(document.getElementById('ticketAvg').value) || 1;
+            const sel = document.getElementById('roi-prop').value;
+            const total = dataStore['p'+sel].costNum;
+            const peopleNeeded = Math.ceil(total / ticket);
+            
+            const el = document.getElementById('roi-result');
+            el.innerText = peopleNeeded;
+            el.style.transform = "scale(1.2)";
+            setTimeout(() => el.style.transform = "scale(1)", 200);
+        };
+
+        window.generateContract = () => {
+            if(!dataStore.p1) return;
+            const sel = document.getElementById('contract-prop').value;
+            const prop = dataStore['p'+sel];
+            
+            const text = 
+`ACUERDO DE PRESTACIÓN DE SERVICIOS MUSICALES
+--------------------------------------------
+Fecha: ${new Date().toLocaleDateString('es-MX')}
+Cliente: Restaurante Cornalina
+Agencia: Dolce Ensamble (Rolando)
+
+1. SERVICIO: El Proveedor (Dolce Ensamble) se compromete a proveer talento musical bajo el formato "${prop.name}".
+2. HORARIOS: Se respetará el estándar de 50 minutos de música por 10 minutos de descanso por cada hora contratada.
+3. INVERSIÓN: El Cliente se compromete a pagar la cantidad de ${prop.cost} MXN netos por evento pactado. Este monto incluye honorarios de músicos, traslados, equipo de audio premium y gestión directiva.
+4. AUDIO: El proveedor conectará su equipo propio asegurando la calidad acústica idónea para el lugar.
+
+Firma Cliente: _____________________
+Firma Dolce Ensamble: _____________________`;
+
+            document.getElementById('contract-text').value = text;
+        };
+
+        window.copyContract = () => {
+            const el = document.getElementById('contract-text');
+            el.select(); document.execCommand('copy');
+            showToast("📝 Contrato copiado. Listo para enviar.");
+        };
+
+        window.copyToClipboard = () => {
+            const r = document.getElementById('rate').value;
+            const t = document.getElementById('travel').value;
+            const f = document.getElementById('fee').value;
+            const text = `*Cotización Dolce Ensamble* 🎻\nTarifa Músico: $${r}/h | Traslado: $${t} | Audio/Gestión: $${f}\n\n` +
+                         `*${dataStore.p1.name}:* ${dataStore.p1.cost}\n*${dataStore.p2.name}:* ${dataStore.p2.cost}\n` +
+                         `*${dataStore.p3.name}:* ${dataStore.p3.cost}\n*${dataStore.p4.name}:* ${dataStore.p4.cost}\n`;
+            const el = document.createElement('textarea');
+            el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            showToast("📱 Precios copiados para WhatsApp!");
+        };
+
+        window.downloadImage = () => {
+            const selection = document.getElementById('download-select').value;
+            const targetId = selection === 'export-area' ? 'export-area' : selection;
+            const element = document.getElementById(targetId);
+            
+            showToast("📸 Capturando imagen...");
+            html2canvas(element, { backgroundColor: '#121212', scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = selection === 'export-area' ? 'Propuestas_Dolce_Ensamble.png' : `Propuesta_${selection}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast("✅ Imagen guardada.");
+            });
+        };
+
+        window.addShowZone = () => {
+            const container = document.getElementById('shows-container');
+            const newId = 'show' + window.showCounter++;
+            const div = document.createElement('div');
+            div.className = 'drop-zone show-zone fade-in';
+            div.id = newId;
+            
+            div.ondrop = window.drop; div.ondragover = window.allowDrop; div.ondragenter = window.dragEnter; div.ondragleave = window.dragLeave;
+            
+            div.innerHTML = `
+                <div class="show-header">
+                    <input type="text" class="show-title-input" value="✨ Nuevo Show" oninput="window.triggerSave()">
+                    <button class="btn-danger" onclick="window.deleteZone('${newId}')">✖</button>
+                </div>
+            `;
+            container.appendChild(div);
+            window.triggerSave();
+        };
+
+        window.deleteZone = (id) => {
+            if(confirm("¿Borrar este escenario y sus músicos asignados?")) {
+                document.getElementById(id).remove();
+                window.triggerSave();
+            }
+        };
+
+        window.addMusician = () => {
+            const name = document.getElementById('musicianName').value.trim();
+            const inst = document.getElementById('musicianInst').value.trim();
+            if(!name) { alert("Escribe un nombre."); return; }
+            
+            const id = 'custom_m' + Date.now();
+            const text = inst ? `${name} (${inst})` : name;
+            
+            document.getElementById('roster-zone').appendChild(createMusicianTag(id, text));
+            document.getElementById('musicianName').value = ''; document.getElementById('musicianInst').value = '';
+            window.triggerSave();
+        };
+
+        window.removeTag = (btnElement) => {
+            btnElement.parentNode.remove();
+            window.triggerSave();
+        };
+
+        // --- LOGICA MATEMÁTICA ---
+        function calculateMath() {
             const rate = parseFloat(document.getElementById('rate').value) || 0;
             const fee = parseFloat(document.getElementById('fee').value) || 0;
             const travel = parseFloat(document.getElementById('travel').value) || 0;
@@ -469,152 +597,46 @@
             document.getElementById('p4-travel').innerText = formatter.format(p4TravelCost) + ` (${p4TotalMusicians} viajes)`;
             document.getElementById('p4-total').innerText = formatter.format(p4Total);
 
-            // Guardar para copy/paste y ROI
-            data = {
-                rate: rate, fee: fee, travel: travel,
+            // Actualizar dataStore
+            dataStore = {
                 p1: { name: t1, costNum: p1Total, cost: formatter.format(p1Total) },
                 p2: { name: t2, costNum: p2Total, cost: formatter.format(p2Total) },
                 p3: { name: t3, costNum: p3Total, cost: formatter.format(p3Total) },
                 p4: { name: t4, costNum: p4Total, cost: formatter.format(p4Total) }
             };
 
-            calculateROI();
-            generateContract();
+            window.calculateROI();
+            window.generateContract();
         }
 
-        // --- HERRAMIENTA: RENTABILIDAD ---
-        function calculateROI() {
-            if(!data.p1) return;
-            const ticket = parseFloat(document.getElementById('ticketAvg').value) || 1;
-            const sel = document.getElementById('roi-prop').value;
-            const total = data['p'+sel].costNum;
-            const peopleNeeded = Math.ceil(total / ticket);
-            
-            const el = document.getElementById('roi-result');
-            el.innerText = peopleNeeded;
-            
-            // Animación
-            el.style.transform = "scale(1.2)";
-            setTimeout(() => el.style.transform = "scale(1)", 200);
-        }
-
-        // --- HERRAMIENTA: CONTRATOS ---
-        function generateContract() {
-            if(!data.p1) return;
-            const sel = document.getElementById('contract-prop').value;
-            const prop = data['p'+sel];
-            
-            const text = 
-`ACUERDO DE PRESTACIÓN DE SERVICIOS MUSICALES
---------------------------------------------
-Fecha: ${new Date().toLocaleDateString('es-MX')}
-Cliente: Restaurante Cornalina
-Agencia: Dolce Ensamble (Rolando)
-
-1. SERVICIO: El Proveedor (Dolce Ensamble) se compromete a proveer talento musical bajo el formato "${prop.name}".
-2. HORARIOS: Se respetará el estándar de 50 minutos de música por 10 minutos de descanso por cada hora contratada.
-3. INVERSIÓN: El Cliente se compromete a pagar la cantidad de ${prop.cost} MXN netos por evento pactado. Este monto incluye honorarios de músicos, traslados, equipo de audio premium y gestión directiva.
-4. AUDIO: El proveedor conectará su equipo propio asegurando la calidad acústica idónea para el lugar.
-
-Firma Cliente: _____________________
-Firma Dolce Ensamble: _____________________`;
-
-            document.getElementById('contract-text').value = text;
-        }
-
-        function copyContract() {
-            const el = document.getElementById('contract-text');
-            el.select(); document.execCommand('copy');
-            showToast("📝 Contrato copiado. Listo para enviar.");
-        }
-
-        // --- FUNCIONES GENERALES ---
         function showToast(msg) {
             const toast = document.getElementById("toast");
             toast.innerText = msg; toast.className = "show";
             setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        function copyToClipboard() {
-            const text = `*Cotización Dolce Ensamble* 🎻\nTarifa Músico: $${data.rate}/h | Traslado: $${data.travel} | Audio/Gestión: $${data.fee}\n\n` +
-                         `*${data.p1.name}:* ${data.p1.cost}\n*${data.p2.name}:* ${data.p2.cost}\n` +
-                         `*${data.p3.name}:* ${data.p3.cost}\n*${data.p4.name}:* ${data.p4.cost}\n`;
-            const el = document.createElement('textarea');
-            el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-            showToast("📱 Precios copiados para WhatsApp!");
-        }
-
-        function downloadImage() {
-            const selection = document.getElementById('download-select').value;
-            const targetId = selection === 'export-area' ? 'export-area' : selection;
-            const element = document.getElementById(targetId);
-            
-            showToast("📸 Capturando imagen...");
-            html2canvas(element, { backgroundColor: '#121212', scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                // Asignar nombre según si fue todo o individual
-                link.download = selection === 'export-area' ? 'Propuestas_Dolce_Ensamble.png' : `Propuesta_${selection}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                showToast("✅ Imagen guardada.");
-            });
-        }
-
-        /* --- DRAG AND DROP Y SHOWS DINÁMICOS --- */
-        let cloneCounter = 0;
-
-        function addShowZone() {
-            const container = document.getElementById('shows-container');
-            const newId = 'show' + showCounter++;
+        function createMusicianTag(id, text) {
             const div = document.createElement('div');
-            div.className = 'drop-zone show-zone fade-in';
-            div.id = newId;
-            
-            div.ondrop = drop; div.ondragover = allowDrop; div.ondragenter = dragEnter; div.ondragleave = dragLeave;
-            
-            div.innerHTML = `
-                <div class="show-header">
-                    <input type="text" class="show-title-input" value="✨ Nuevo Show">
-                    <button class="btn-danger" onclick="deleteZone('${newId}')">✖</button>
-                </div>
-            `;
-            container.appendChild(div);
+            div.className = 'musician-tag fade-in'; div.draggable = true; div.id = id; div.ondragstart = window.drag;
+            div.innerHTML = `${text}<span class="delete-btn" onclick="window.removeTag(this)">×</span>`;
+            return div;
         }
 
-        function deleteZone(id) {
-            if(confirm("¿Borrar este escenario y sus músicos asignados?")) {
-                document.getElementById(id).remove();
-            }
-        }
-
-        function addMusician() {
-            const name = document.getElementById('musicianName').value.trim();
-            const inst = document.getElementById('musicianInst').value.trim();
-            if(!name) { alert("Escribe un nombre."); return; }
-            
-            const id = 'custom_m' + Date.now();
-            const text = inst ? `${name} (${inst})` : name;
-            
-            const div = document.createElement('div');
-            div.className = 'musician-tag fade-in'; div.draggable = true; div.id = id; div.ondragstart = drag;
-            div.innerHTML = `${text}<span class="delete-btn" onclick="this.parentNode.remove()">×</span>`;
-            
-            document.getElementById('roster-zone').appendChild(div);
-            document.getElementById('musicianName').value = ''; document.getElementById('musicianInst').value = '';
-        }
-
-        function allowDrop(ev) { ev.preventDefault(); }
-        function dragEnter(ev) { 
+        // --- DRAG & DROP LOGIC ---
+        window.allowDrop = (ev) => { ev.preventDefault(); }
+        window.dragEnter = (ev) => { 
             let t = ev.target; while(t && !t.classList.contains('drop-zone')) t = t.parentElement;
             if(t) t.classList.add('dragover'); 
         }
-        function dragLeave(ev) { 
+        window.dragLeave = (ev) => { 
             let t = ev.target; while(t && !t.classList.contains('drop-zone')) t = t.parentElement;
             if(t) t.classList.remove('dragover'); 
         }
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); ev.dataTransfer.setData("source", ev.target.parentElement.id); }
-        
-        function drop(ev) {
+        window.drag = (ev) => { 
+            ev.dataTransfer.setData("text", ev.target.id); 
+            ev.dataTransfer.setData("source", ev.target.parentElement.id); 
+        }
+        window.drop = (ev) => {
             ev.preventDefault();
             let data = ev.dataTransfer.getData("text");
             let sourceId = ev.dataTransfer.getData("source");
@@ -629,16 +651,199 @@ Firma Dolce Ensamble: _____________________`;
                 if(sourceId === 'roster-zone' && target.id !== 'roster-zone') {
                     const clone = elementToMove.cloneNode(true);
                     clone.id = data + '_clone_' + cloneCounter++;
-                    clone.ondragstart = drag; // Reasignar evento de arrastre al clon
+                    clone.ondragstart = window.drag; 
                     target.appendChild(clone);
                 } 
                 else if (sourceId !== 'roster-zone' && target.id === 'roster-zone') { elementToMove.remove(); }
                 else if (sourceId !== 'roster-zone' && target.id !== 'roster-zone') { target.appendChild(elementToMove); }
+                
+                window.triggerSave();
             }
         }
 
-        // Init
-        window.onload = calculateAll;
+        // --- FIREBASE SYNC LOGIC ---
+
+        function gatherState() {
+            return {
+                inputs: {
+                    rate: document.getElementById('rate').value,
+                    travel: document.getElementById('travel').value,
+                    fee: document.getElementById('fee').value
+                },
+                proposals: {
+                    p1: { title: document.getElementById('p1-title').value, h1: document.getElementById('p1-h1').value, h2: document.getElementById('p1-h2').value, format: document.getElementById('format1').value },
+                    p2: { title: document.getElementById('p2-title').value, h: document.getElementById('p2-h').value, format: document.getElementById('format2').value },
+                    p3: { title: document.getElementById('p3-title').value, h1: document.getElementById('p3-h1').value, h2: document.getElementById('p3-h2').value, format: document.getElementById('format3').value },
+                    p4: { title: document.getElementById('p4-title').value, h1: document.getElementById('p4-h1').value, h2: document.getElementById('p4-h2').value, format: document.getElementById('format4').value }
+                },
+                roster: Array.from(document.getElementById('roster-zone').querySelectorAll('.musician-tag')).map(el => ({
+                    id: el.id,
+                    text: el.childNodes[0].nodeValue.trim()
+                })),
+                shows: Array.from(document.querySelectorAll('.shows-panel .show-zone')).map(zone => {
+                    return {
+                        id: zone.id,
+                        title: zone.querySelector('.show-title-input').value,
+                        musicians: Array.from(zone.querySelectorAll('.musician-tag')).map(el => ({
+                            id: el.id,
+                            text: el.childNodes[0].nodeValue.trim()
+                        }))
+                    };
+                }),
+                tools: {
+                    ticketAvg: document.getElementById('ticketAvg').value
+                }
+            };
+        }
+
+        function applyState(state) {
+            isApplyingState = true; // Pausar triggerSave
+
+            const safeUpdate = (id, val) => {
+                const el = document.getElementById(id);
+                if (el && document.activeElement !== el && el.value !== String(val)) {
+                    el.value = val;
+                }
+            };
+
+            // Restaurar Inputs
+            if (state.inputs) {
+                safeUpdate('rate', state.inputs.rate);
+                safeUpdate('travel', state.inputs.travel);
+                safeUpdate('fee', state.inputs.fee);
+            }
+
+            // Restaurar Propuestas
+            if (state.proposals) {
+                safeUpdate('p1-title', state.proposals.p1.title); safeUpdate('p1-h1', state.proposals.p1.h1); safeUpdate('p1-h2', state.proposals.p1.h2); safeUpdate('format1', state.proposals.p1.format);
+                safeUpdate('p2-title', state.proposals.p2.title); safeUpdate('p2-h', state.proposals.p2.h); safeUpdate('format2', state.proposals.p2.format);
+                safeUpdate('p3-title', state.proposals.p3.title); safeUpdate('p3-h1', state.proposals.p3.h1); safeUpdate('p3-h2', state.proposals.p3.h2); safeUpdate('format3', state.proposals.p3.format);
+                safeUpdate('p4-title', state.proposals.p4.title); safeUpdate('p4-h1', state.proposals.p4.h1); safeUpdate('p4-h2', state.proposals.p4.h2); safeUpdate('format4', state.proposals.p4.format);
+            }
+
+            if (state.tools) {
+                safeUpdate('ticketAvg', state.tools.ticketAvg);
+            }
+
+            // Restaurar Roster y Shows SOLO si no hay nada enfocado que pueda romperse
+            const activeType = document.activeElement ? document.activeElement.type : '';
+            if (activeType !== 'text') {
+                
+                const rosterZone = document.getElementById('roster-zone');
+                Array.from(rosterZone.querySelectorAll('.musician-tag')).forEach(el => el.remove());
+                
+                if (state.roster && state.roster.length > 0) {
+                    state.roster.forEach(m => rosterZone.appendChild(createMusicianTag(m.id, m.text)));
+                } else if (!state.roster) {
+                    // Carga inicial por defecto si está vacío
+                    const defaults = [
+                        {id: 'm1', text: 'Rolando (Sax/Violín)'}, {id: 'm2', text: 'Sofía (Voz Inglés)'},
+                        {id: 'm3', text: 'Ana (Voz Español)'}, {id: 'm4', text: 'Carlos (Percusión)'},
+                        {id: 'm5', text: 'Luis (Bajo)'}, {id: 'm6', text: 'Elena (Cello)'}
+                    ];
+                    defaults.forEach(m => rosterZone.appendChild(createMusicianTag(m.id, m.text)));
+                }
+
+                const showsContainer = document.getElementById('shows-container');
+                showsContainer.innerHTML = '';
+                
+                if (state.shows && state.shows.length > 0) {
+                    state.shows.forEach(show => {
+                        const div = document.createElement('div');
+                        div.className = 'drop-zone show-zone fade-in'; div.id = show.id;
+                        div.ondrop = window.drop; div.ondragover = window.allowDrop; div.ondragenter = window.dragEnter; div.ondragleave = window.dragLeave;
+
+                        div.innerHTML = `
+                            <div class="show-header">
+                                <input type="text" class="show-title-input" value="${show.title}" oninput="window.triggerSave()">
+                                <button class="btn-danger" onclick="window.deleteZone('${show.id}')">✖</button>
+                            </div>
+                        `;
+                        
+                        show.musicians.forEach(m => div.appendChild(createMusicianTag(m.id, m.text)));
+                        showsContainer.appendChild(div);
+                    });
+                    window.showCounter = Math.max(window.showCounter, state.shows.length + 10);
+                } else if (!state.shows) {
+                    // Carga por defecto
+                    const defaultShows = ["1️⃣ Pop & Soul", "2️⃣ Fiesta Latina", "3️⃣ Electro-Strings", "4️⃣ Leyendas del Rock"];
+                    defaultShows.forEach((title, index) => {
+                        const newId = 'show' + (index + 1);
+                        const div = document.createElement('div');
+                        div.className = 'drop-zone show-zone fade-in'; div.id = newId;
+                        div.ondrop = window.drop; div.ondragover = window.allowDrop; div.ondragenter = window.dragEnter; div.ondragleave = window.dragLeave;
+                        div.innerHTML = `
+                            <div class="show-header">
+                                <input type="text" class="show-title-input" value="${title}" oninput="window.triggerSave()">
+                                <button class="btn-danger" onclick="window.deleteZone('${newId}')">✖</button>
+                            </div>`;
+                        showsContainer.appendChild(div);
+                    });
+                }
+            }
+
+            calculateMath();
+            isApplyingState = false;
+        }
+
+        window.triggerSave = () => {
+            if (isApplyingState) return;
+            
+            // Actualizar interfaz visual
+            const syncDot = document.getElementById('sync-dot');
+            const syncText = document.getElementById('sync-text');
+            syncDot.classList.remove('online');
+            syncText.innerText = "Guardando...";
+
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(async () => {
+                const state = gatherState();
+                if(auth.currentUser) {
+                    try {
+                        await setDoc(docRef, state);
+                        syncDot.classList.add('online');
+                        syncText.innerText = "Sincronizado en línea";
+                    } catch (error) {
+                        console.error("Error al guardar:", error);
+                        syncText.innerText = "Error de sincronización";
+                    }
+                }
+            }, 800); // 800ms debounce
+        };
+
+        // --- INICIALIZACIÓN DE FIREBASE ---
+        async function initApp() {
+            try {
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Error Auth:", error);
+                document.getElementById('sync-text').innerText = "Error de Conexión Auth";
+            }
+        }
+
+        initApp();
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) return;
+            
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    if (!isApplyingState) {
+                        applyState(docSnap.data());
+                        document.getElementById('sync-dot').classList.add('online');
+                        document.getElementById('sync-text').innerText = "Sincronizado en línea";
+                    }
+                } else {
+                    // Documento no existe aún, guardar el estado inicial (valores por defecto)
+                    window.triggerSave();
+                }
+            }, (error) => {
+                console.error("Firestore error:", error);
+                document.getElementById('sync-text').innerText = "Sin conexión";
+                document.getElementById('sync-dot').classList.remove('online');
+            });
+        });
+
     </script>
 </body>
 </html>
